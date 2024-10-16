@@ -1,0 +1,7 @@
+.prevNextBtn {
+  @apply rounded w-[100px] h-[30px] flex justify-center items-center;
+
+  svg {
+    @apply w-[30px] h-[30px]
+  }
+}
