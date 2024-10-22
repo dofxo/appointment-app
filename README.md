@@ -1,4 +1,4 @@
-# barber-shop
+# appointment-app
 This is a Vite-based project. Follow the steps below to install and run the application.
 
 ## Prerequisites
@@ -14,10 +14,10 @@ Make sure you have the following installed:
 To get started, clone the repository and install the dependencies:
 
 ```markdown
-git clone https://github.com/dofxo/barber-shop.git
+git clone https://github.com/dofxo/appointment-app.git
 ```
 ```
-cd barber-shop
+cd appointment-app
 ```
 ```
 npm install
