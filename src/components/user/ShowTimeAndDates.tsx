@@ -50,6 +50,7 @@ const ShowTimeAndDates = ({
               text: "تایید و برگشت",
               bgColor: "green",
               borderColor: "green",
+              textColor: "white",
             },
 
             onClose: () => {
