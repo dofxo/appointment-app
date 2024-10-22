@@ -18,8 +18,7 @@ const UserNameStep = ({
     <Formik
       initialValues={{ userName: "" }}
       validationSchema={usernameSchema}
-      onSubmit={(values) => {
-        console.log("Form submitted with values:", values); // Log values on submit
+      onSubmit={() => {
         if (userNameInputRef.current?.value) {
           setUserName(userNameInputRef.current.value);
 
@@ -42,7 +41,13 @@ const UserNameStep = ({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <MdOutlineAccountCircle className="ml-2 w-[20px] h-[20px] fill-white" />
+                        <MdOutlineAccountCircle
+                          className={`ml-2 w-[20px] h-[20px] fill-white ${
+                            touched.userName && errors.userName
+                              ? "fill-red-500"
+                              : ""
+                          }`}
+                        />
                       </InputAdornment>
                     ),
                   }}
