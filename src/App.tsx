@@ -28,7 +28,7 @@ const App = () => {
     <AdminContext.Provider value={{ setShowAdmin, showAdmin }}>
       <center className="max-w-[1200px] m-[auto] mt-[20px]">
         <div id="page-title" className="mb-[40px]">
-          <h1 className="text-3xl text-[#00A9FF]">رزرو نوبت آرایشگاه</h1>
+          <h1 className="text-3xl text-[#00A9FF]">رزرو نوبت</h1>
           <Button
             variant="contained"
             onClick={() => {
