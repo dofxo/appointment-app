@@ -15,12 +15,19 @@ const UserPage = () => {
   const [userName, setUserName] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
+  const submitButtonRef = useRef<null | HTMLButtonElement>(null);
+
   const userNameInputRef = useRef<null | HTMLInputElement>(null);
 
   return (
     <div className="mt-[50px]">
       {step === 1 && (
-        <UserNameStep userName={userName} userNameInputRef={userNameInputRef} />
+        <UserNameStep
+          userNameInputRef={userNameInputRef}
+          setStep={setStep}
+          setUserName={setUserName}
+          submitButtonRef={submitButtonRef}
+        />
       )}
       {step === 2 && (
         <DateStep
@@ -53,25 +60,12 @@ const UserPage = () => {
         <Button
           variant="contained"
           style={{ display: step >= 2 ? "none" : "" }}
+          className="prevNextBtn"
           onClick={() => {
-            if (userNameInputRef.current?.value) {
-              setUserName(userNameInputRef.current.value);
-
-              setStep((prev) => prev + 1);
-            } else {
-              // @ts-ignore
-              silverBox({
-                title: {
-                  alertIcon: "error",
-                  text: "فیلد های مورد نظر را پر کنید",
-                },
-                timer: 2000,
-                theme: "dark",
-                position: "top-right",
-              });
+            if (submitButtonRef.current) {
+              submitButtonRef.current.click();
             }
           }}
-          className="prevNextBtn"
         >
           <HiChevronLeft />
         </Button>
