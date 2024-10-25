@@ -1,6 +1,7 @@
 import { supabase } from "../Supabase/initialize";
 import { FormValues } from "../types/types";
 import toast from "react-hot-toast";
+import uniqueIdGenerator from "./uniqueIdGenerator";
 
 export const handleSubmit = async ({
   values,
@@ -32,9 +33,13 @@ export const handleSubmit = async ({
       }
 
       if (newUser) {
-        const { error } = await supabase
-          .from("users")
-          .insert([{ username: values.username, password: values.password }]);
+        const { error } = await supabase.from("users").insert([
+          {
+            username: values.username,
+            password: values.password,
+            id: uniqueIdGenerator(),
+          },
+        ]);
 
         if (error) throw error;
         toast.success("ثبت نام با موفقیت انجام شد");
