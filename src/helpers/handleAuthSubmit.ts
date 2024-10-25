@@ -2,6 +2,7 @@ import { supabase } from "../Supabase/initialize";
 import { FormValues } from "../types/types";
 import toast from "react-hot-toast";
 import uniqueIdGenerator from "./uniqueIdGenerator";
+import setToken from "./setToken";
 
 export const handleSubmit = async ({
   values,
@@ -33,17 +34,20 @@ export const handleSubmit = async ({
       }
 
       if (newUser) {
+        const userId = uniqueIdGenerator();
+
         const { error } = await supabase.from("users").insert([
           {
             username: values.username,
             password: values.password,
-            id: uniqueIdGenerator(),
+            id: userId,
           },
         ]);
 
         if (error) throw error;
         toast.success("ثبت نام با موفقیت انجام شد");
         setOpenModal(false);
+        setToken(String(userId));
       } else {
         toast.error("کاربری با نام کابری شما وجود دارد");
       }
@@ -57,6 +61,7 @@ export const handleSubmit = async ({
         if (data[0].password === values.password) {
           toast.success("ورود با موفقیت انجام شد");
           setOpenModal(false);
+          setToken(String(data[0].id));
         } else {
           toast.error("رمز عبور اشتباه است");
         }
