@@ -51,7 +51,6 @@ export const handleSubmit = async ({
         setOpenModal(false);
         setToken(String(userId));
         setUserId(String(userId));
-        navigate("/user");
       } else {
         toast.error("کاربری با نام کابری شما وجود دارد");
       }
@@ -67,7 +66,6 @@ export const handleSubmit = async ({
           setOpenModal(false);
           setToken(String(data[0].id));
           setUserId(String(data[0].id));
-          navigate(data[0].isAdmin ? "/admin" : "/user");
         } else {
           toast.error("رمز عبور اشتباه است");
         }
