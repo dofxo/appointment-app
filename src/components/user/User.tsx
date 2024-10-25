@@ -6,42 +6,27 @@ import { useState, useRef } from "react";
 import "./style.scss";
 
 import DateStep from "./DateStep";
-import UserNameStep from "./userNameStep";
 import TimeStep from "./TimeStep";
 
-const UserPage = () => {
+const UserPage = ({ userName }: { userName: string }) => {
   const [step, setStep] = useState(1);
-
-  const [userName, setUserName] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-
   const submitButtonRef = useRef<null | HTMLButtonElement>(null);
-
-  const userNameInputRef = useRef<null | HTMLInputElement>(null);
 
   return (
     <div className="mt-[50px]">
       {step === 1 && (
-        <UserNameStep
-          userNameInputRef={userNameInputRef}
-          setStep={setStep}
-          setUserName={setUserName}
-          submitButtonRef={submitButtonRef}
-        />
-      )}
-      {step === 2 && (
         <DateStep
           userName={userName}
           setSelectedDate={setSelectedDate}
           setStep={setStep}
         />
       )}
-      {step === 3 && (
+      {step === 2 && (
         <TimeStep
           userName={userName}
           selectedDate={selectedDate}
           setStep={setStep}
-          setUserName={setUserName}
         />
       )}
 

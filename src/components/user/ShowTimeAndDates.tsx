@@ -7,7 +7,6 @@ const ShowTimeAndDates = ({
   setStep,
   userName,
   selectedDate,
-  setUserName,
   dateId,
 }: {
   date: string;
@@ -15,7 +14,6 @@ const ShowTimeAndDates = ({
   setStep: React.Dispatch<React.SetStateAction<number>>;
   userName?: string;
   selectedDate?: string;
-  setUserName?: React.Dispatch<React.SetStateAction<string>>;
   dateId?: string;
 }) => {
   return (
@@ -51,11 +49,6 @@ const ShowTimeAndDates = ({
               bgColor: "green",
               borderColor: "green",
               textColor: "white",
-            },
-
-            onClose: () => {
-              setStep(1);
-              if (setUserName) setUserName("");
             },
           });
         }

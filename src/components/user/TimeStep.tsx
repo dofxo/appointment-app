@@ -7,12 +7,10 @@ const TimeStep = ({
   userName = "کاربر",
   selectedDate,
   setStep,
-  setUserName,
 }: {
   userName: string;
   selectedDate: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [reservedTimes, setReservedTime] = useState<reservredDatesArrayType>(
     [],

@@ -131,7 +131,7 @@ const App = () => {
                 element={<SeeReserves dates={dates} setDates={setDates} />}
               />
             </Route>
-            <Route path="/user" element={<User />} />
+            <Route path="/user" element={<User userName={username} />} />
           </Routes>
         </div>
       </center>
