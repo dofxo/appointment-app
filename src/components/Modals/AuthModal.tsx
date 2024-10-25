@@ -28,9 +28,11 @@ const style = {
 const AuthModal = ({
   setOpenModal,
   openModal,
+  setUserId,
 }: {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
   const [isLogin, setStatus] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -80,7 +82,13 @@ const AuthModal = ({
 
         <Formik<FormValues>
           onSubmit={(values) => {
-            handleSubmit({ values, isLogin, setOpenModal, setLoading });
+            handleSubmit({
+              values,
+              isLogin,
+              setOpenModal,
+              setLoading,
+              setUserId,
+            });
           }}
           validationSchema={authSchema(isLogin)}
           initialValues={{ password: "", confirmPassword: "", username: "" }}

@@ -1,6 +1,5 @@
-const setToken = (userId: string) => {
-  localStorage.setItem("token", userId);
-  console.log(userId);
+const setToken = (userId: string | null) => {
+  localStorage.setItem("token", userId || "");
 };
 
 export default setToken;

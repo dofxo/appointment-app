@@ -9,11 +9,13 @@ export const handleSubmit = async ({
   isLogin,
   setOpenModal,
   setLoading,
+  setUserId,
 }: {
   values: FormValues;
   isLogin: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
   try {
     setLoading(true);
@@ -48,6 +50,7 @@ export const handleSubmit = async ({
         toast.success("ثبت نام با موفقیت انجام شد");
         setOpenModal(false);
         setToken(String(userId));
+        setUserId(String(userId));
       } else {
         toast.error("کاربری با نام کابری شما وجود دارد");
       }
@@ -62,6 +65,7 @@ export const handleSubmit = async ({
           toast.success("ورود با موفقیت انجام شد");
           setOpenModal(false);
           setToken(String(data[0].id));
+          setUserId(String(data[0].id));
         } else {
           toast.error("رمز عبور اشتباه است");
         }
