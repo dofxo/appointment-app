@@ -9,6 +9,7 @@ import { TextField } from "@mui/material";
 import { Formik, Form, Field, FormikErrors, FormikTouched } from "formik";
 import { authSchema } from "../../schemas/authSchema";
 import { FormValues, InputInfo, inputTypes } from "../../types/types";
+import toast from "react-hot-toast";
 
 const style = {
   position: "absolute",
@@ -34,16 +35,55 @@ const AuthModal = ({
 }) => {
   const [isLogin, setStatus] = useState(false);
 
-  const handleSubmit = async () => {
-    const { data, error } = await supabase
-      .from("users")
-      .insert([
-        {
-          // name: nameValue,
-          // password: passwordValue,
-        },
-      ])
-      .select();
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      const { data: users } = await supabase.from("users").select("*");
+
+      if (!isLogin) {
+        let newUser: boolean = true;
+
+        if (users) {
+          for (const user of users) {
+            const userExists = user.username === values.username;
+
+            if (userExists) {
+              newUser = false;
+              break;
+            }
+          }
+        }
+
+        if (newUser) {
+          const { error } = await supabase
+            .from("users")
+            .insert([{ username: values.username, password: values.password }]);
+
+          if (error) throw error;
+          toast.success("ثبت نام با موفقیت انجام شد");
+          setOpenModal(false);
+        } else {
+          toast.error("کاربری با نام کابری شما وجود دارد");
+        }
+      } else {
+        const { data } = await supabase
+          .from("users")
+          .select("*")
+          .eq("username", values.username);
+
+        if (data?.length) {
+          if (data[0].password === values.password) {
+            toast.success("ورود با موفقیت انجام شد");
+            setOpenModal(false);
+          } else {
+            toast.error("رمز عبور اشتباه است");
+          }
+        } else {
+          toast.error("نام کاربری وارد شده وجود ندارد");
+        }
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+    }
   };
 
   const usernameRef = useRef<inputTypes>();
@@ -90,8 +130,8 @@ const AuthModal = ({
         </Typography>
 
         <Formik<FormValues>
-          onSubmit={() => {}}
-          validationSchema={authSchema}
+          onSubmit={handleSubmit}
+          validationSchema={authSchema(isLogin)}
           initialValues={{ password: "", confirmPassword: "", username: "" }}
         >
           {({
@@ -128,23 +168,14 @@ const AuthModal = ({
                   return null;
                 }
               })}
+              <hr className="my-5" />
+              <Button variant="contained" type="submit">
+                {" "}
+                {isLogin ? "ورود" : "عضویت"}
+              </Button>
             </Form>
           )}
         </Formik>
-
-        <Button
-          variant="contained"
-          onClick={() => {
-            const inputValues = {
-              username: usernameRef?.current?.value,
-              password: passwordRef?.current?.value,
-            };
-            console.log(inputValues);
-          }}
-        >
-          {" "}
-          {isLogin ? "ورود" : "عضویت"}
-        </Button>
 
         <div className="flex gap-1 items-center !text-[12px]">
           <span className="text-black">

@@ -1,14 +1,15 @@
-import * as Yup from "yup";
+import * as yup from "yup";
 
-export const authSchema = Yup.object().shape({
-  username: Yup.string().required("نام کاربری را وارد کنید"),
-
-  password: Yup.string()
-    .min(4, "رمز عبور حداقل باید ۴ کارکتر باشد")
-    .max(16, "رمز عبور باید حداکثر ۱۶ کارکتر باشد")
-    .required("رمز عبور را وارد کنید"),
-
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), ""], "رمز عبور یکسان نیست")
-    .required("پر کردن این قسمت اجباری است"),
-});
+export const authSchema = (isLogin: boolean) =>
+  yup.object().shape({
+    username: yup.string().required("نام کاربری اجباری است"),
+    password: yup.string().required("رمز عبور اجباری است"),
+    confirmPassword: yup.string().when("password", {
+      is: () => !isLogin,
+      then: (schema) =>
+        schema
+          .oneOf([yup.ref("password"), ""], "رمز عبور یکسان نیست")
+          .required("تکرار رمز عبور اجباری است"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  });

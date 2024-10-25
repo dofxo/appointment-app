@@ -11,6 +11,7 @@ import { AdminContext } from "./context/adminContent";
 import { Navigate, useLocation } from "react-router-dom";
 
 import AuthModal from "./components/Modals/AuthModal";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
@@ -30,6 +31,7 @@ const App = () => {
 
   return (
     <AdminContext.Provider value={{ setShowAdmin, showAdmin }}>
+      <Toaster />
       <center className="max-w-[1200px] m-[auto] mt-[20px]">
         <div id="page-title" className="mb-[40px]">
           <h1 className="text-3xl text-[#00A9FF]">رزرو نوبت</h1>
@@ -54,7 +56,6 @@ const App = () => {
           </Button>
         </div>
 
-        {/* Auth modal */}
         <AuthModal openModal={openModal} setOpenModal={setOpenModal} />
 
         <div className="mt-[15%]">
