@@ -40,7 +40,6 @@ const TimeStep = ({
             setStep={setStep}
             selectedDate={selectedDate}
             userName={userName}
-            setUserName={setUserName}
           />
         ))}
       </div>

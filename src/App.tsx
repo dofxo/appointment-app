@@ -14,6 +14,7 @@ import AuthModal from "./components/Modals/AuthModal";
 import { Toaster } from "react-hot-toast";
 import { supabase } from "./Supabase/initialize";
 import setToken from "./helpers/setToken";
+import AuthPrompt from "./components/AuthPrompt/AuthPrompt";
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
@@ -24,6 +25,7 @@ const App = () => {
   const [username, setUsername] = useState("");
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const { pathname } = location;
@@ -49,15 +51,17 @@ const App = () => {
 
           if (data.isAdmin) setIsAdmin(true);
 
+          navigate(data.isAdmin ? "/admin" : "/user");
+
           if (error) throw error;
         } catch (error) {
           console.error(error);
         }
+      } else {
+        navigate("/authPrompt");
       }
     })();
   }, [userId]);
-
-  const navigate = useNavigate();
 
   return (
     <AdminContext.Provider value={{ setShowAdmin, showAdmin }}>
@@ -120,7 +124,7 @@ const App = () => {
 
         <div className="mt-[15%]">
           <Routes>
-            <Route path="/" element={<Navigate to="/user/" />} />
+            <Route path="/authPrompt" element={<AuthPrompt />} />
             <Route path="/admin" element={<Admin />}>
               <Route
                 path="/admin/create"
