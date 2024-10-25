@@ -5,7 +5,10 @@ import Modal from "@mui/material/Modal";
 import { supabase } from "../../Supabase/initialize";
 import { useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { Input, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import { Formik, Form, Field, FormikErrors, FormikTouched } from "formik";
+import { authSchema } from "../../schemas/authSchema";
+import { FormValues, InputInfo, inputTypes } from "../../types/types";
 
 const style = {
   position: "absolute",
@@ -43,11 +46,11 @@ const AuthModal = ({
       .select();
   };
 
-  const usernameRef = useRef();
-  const passwordRef = useRef();
-  const confirmPasswordRef = useRef();
+  const usernameRef = useRef<inputTypes>();
+  const passwordRef = useRef<inputTypes>();
+  const confirmPasswordRef = useRef<inputTypes>();
 
-  const inputs = [
+  const inputs: InputInfo[] = [
     {
       label: "نام کاربری",
       name: "username",
@@ -61,7 +64,7 @@ const AuthModal = ({
     },
     {
       label: "تکرار رمز عبور",
-      name: "confirm-password",
+      name: "confirmPassword",
       type: "password",
       ref: confirmPasswordRef,
       hide: isLogin,
@@ -86,26 +89,62 @@ const AuthModal = ({
           اطلاعات {isLogin ? "ورود" : "عضویت"} خود را وارد کنید
         </Typography>
 
-        <div className="flex flex-col gap-1">
-          {inputs.map((inputInfo, idx) => {
-            if (!inputInfo.hide) {
-              return (
-                <TextField
-                  inputRef={inputInfo.ref}
-                  size="small"
-                  variant="standard"
-                  label={inputInfo.label}
-                  type={inputInfo.type ? inputInfo.type : "text"}
-                  key={idx}
-                />
-              );
-            } else {
-              return "";
-            }
-          })}
-        </div>
+        <Formik<FormValues>
+          onSubmit={() => {}}
+          validationSchema={authSchema}
+          initialValues={{ password: "", confirmPassword: "", username: "" }}
+        >
+          {({
+            errors,
+            touched,
+          }: {
+            errors: FormikErrors<FormValues>;
+            touched: FormikTouched<FormValues>;
+          }) => (
+            <Form className="flex flex-col gap-1">
+              {inputs.map((inputInfo, idx) => {
+                if (!inputInfo.hide) {
+                  return (
+                    <Field name={inputInfo.name} key={idx}>
+                      {({ field }: any) => (
+                        <TextField
+                          {...field}
+                          inputRef={inputInfo.ref}
+                          size="small"
+                          variant="standard"
+                          label={inputInfo.label}
+                          type={inputInfo.type || "text"}
+                          helperText={
+                            touched[inputInfo.name] && errors[inputInfo.name]
+                          }
+                          error={Boolean(
+                            touched[inputInfo.name] && errors[inputInfo.name],
+                          )}
+                        />
+                      )}
+                    </Field>
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </Form>
+          )}
+        </Formik>
 
-        <Button variant="contained"> {isLogin ? "ورود" : "عضویت"}</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            const inputValues = {
+              username: usernameRef?.current?.value,
+              password: passwordRef?.current?.value,
+            };
+            console.log(inputValues);
+          }}
+        >
+          {" "}
+          {isLogin ? "ورود" : "عضویت"}
+        </Button>
 
         <div className="flex gap-1 items-center !text-[12px]">
           <span className="text-black">

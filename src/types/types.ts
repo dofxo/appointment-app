@@ -3,3 +3,19 @@ export type reservredDatesArrayType = {
   id: string;
   time: string;
 }[];
+
+export interface InputInfo {
+  name: "password" | "confirmPassword" | "username"; // restrict to known values
+  label: string;
+  type?: string;
+  ref?: React.Ref<any>;
+  hide?: boolean;
+}
+
+export interface FormValues {
+  password: string;
+  confirmPassword: string;
+  username: string;
+}
+
+export type inputTypes = null | HTMLInputElement;
