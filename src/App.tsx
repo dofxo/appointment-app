@@ -10,9 +10,13 @@ import ManageReserves from "./components/admin/ManageReserves";
 import { AdminContext } from "./context/adminContent";
 import { Navigate, useLocation } from "react-router-dom";
 
+import AuthModal from "./components/Modals/AuthModal";
+
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
   const [dates, setDates] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+
   const location = useLocation();
 
   useEffect(() => {
@@ -39,7 +43,19 @@ const App = () => {
           >
             تغییر به {showAdmin ? "کاربر" : "ادمین"}
           </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOpenModal(true);
+            }}
+            className="mt-[15px] text-white p-2 rounded !absolute top-5 left-40 !font-[unset]"
+          >
+            ورود/عضویت
+          </Button>
         </div>
+
+        {/* Auth modal */}
+        <AuthModal openModal={openModal} setOpenModal={setOpenModal} />
 
         <div className="mt-[15%]">
           <Routes>

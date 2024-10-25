@@ -6,3 +6,9 @@ body {
   font-family: 'Tahoma';
   background-color: #CDF5FD;
 }
+
+.MuiModal-root {
+  * {
+    font-family: inherit !important;
+  }
+}
