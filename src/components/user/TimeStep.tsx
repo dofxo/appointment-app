@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ShowTimeAndDates from "./ShowTimeAndDates";
 import { reservredDatesArrayType } from "../../types/types";
+import { getReserves } from "../../services/services";
 
 const TimeStep = ({
   userName = "کاربر",
@@ -18,13 +19,13 @@ const TimeStep = ({
 
   useEffect(() => {
     (async () => {
-      const { data: dates } = await axios.get("http://localhost:3000/reserves");
+      const { data: reserves } = await getReserves();
 
-      const filteredReservers = dates.filter(
+      const filteredReservers: reservredDatesArrayType | any = reserves?.filter(
         (date: any) => date.date === selectedDate && !date.userName,
       );
 
-      setReservedTime(filteredReservers);
+      if (filteredReservers) setReservedTime(filteredReservers);
     })();
   }, []);
 

@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import ShowDates from "./ShowTimeAndDates.tsx";
+import { getReserves } from "../../services/services.ts";
 
 const DateStep = ({
   userName = "کاربر",
@@ -15,10 +15,11 @@ const DateStep = ({
 
   useEffect(() => {
     (async () => {
-      const { data: dates } = await axios.get("http://localhost:3000/reserves");
+      const { data: reserves } = await getReserves();
+
       const filteredDates: string[] = [];
 
-      dates.map((date: any) => {
+      reserves?.map((date: any) => {
         if (filteredDates.includes(date.date) || date.userName) return;
         filteredDates.push(date.date);
       });

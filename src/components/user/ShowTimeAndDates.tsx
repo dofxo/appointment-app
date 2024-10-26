@@ -1,5 +1,6 @@
-import axios from "axios";
 import { Card } from "@mui/material";
+import { supabase } from "../../Supabase/initialize";
+import toast from "react-hot-toast";
 
 const ShowTimeAndDates = ({
   date,
@@ -20,40 +21,39 @@ const ShowTimeAndDates = ({
     <Card
       variant="outlined"
       onClick={async () => {
-        // select date step
-        if (setSelectedDate) {
-          setSelectedDate(date);
-        }
-        // select time step
-        else {
-          const { data: reserveDate } = await axios.get(
-            `http://localhost:3000/reserves/${dateId}`,
-          );
+        try {
+          // select date step
+          if (setSelectedDate) {
+            setSelectedDate(date);
+          }
+          // select time step
+          else {
+            const { error } = await supabase
+              .from("reserves")
+              .update({ userName })
+              .eq("id", dateId)
+              .select();
 
-          await axios.put(`http://localhost:3000/reserves/${dateId}`, {
-            ...reserveDate,
-            userName,
+            if (error) throw error;
+
+            toast.success(
+              `نوبت شما در تاریخ ${selectedDate}, ${date} با موفقیت ثبت شد`,
+              {
+                duration: 4000,
+              },
+            );
+          }
+
+          setStep((prev) => {
+            if (prev === 2) {
+              return 1;
+            } else {
+              return prev + 1;
+            }
           });
-
-          // @ts-ignore
-          silverBox({
-            title: {
-              text: "رزرو موفق",
-              alertIcon: "success",
-            },
-            centerContent: true,
-            showCloseButton: true,
-            text: `${userName} گرامی، نوبت شما در تاریخ: ${selectedDate} و در زمان: ${date} با موفقیت ثبت شد.`,
-            cancelButton: {
-              text: "تایید و برگشت",
-              bgColor: "green",
-              borderColor: "green",
-              textColor: "white",
-            },
-          });
+        } catch (error) {
+          console.error(error);
         }
-
-        setStep((prev) => prev + 1);
       }}
       className="border p-2 rounded cursor-pointer !bg-[#00A9FF]"
     >
