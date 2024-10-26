@@ -56,7 +56,10 @@ const SeeReserves = ({
         ) : (
           <div className="self-center flex items-center gap-5">
             <span className="text-white">داده ای یافت نشد</span>
-            <img className="w-[100px]" src="../../../no data.png" />
+            <img
+              className="w-[100px]"
+              src="/appointment-app/assets/no-data.png"
+            />
           </div>
         )}
       </div>
