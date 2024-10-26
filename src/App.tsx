@@ -16,10 +16,11 @@ import { supabase } from "./Supabase/initialize";
 import setToken from "./helpers/setToken";
 import AuthPrompt from "./components/AuthPrompt/AuthPrompt";
 import CircularProgress from "@mui/material/CircularProgress";
+import { reservredDatesArrayType } from "./types/types";
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
-  const [dates, setDates] = useState([]);
+  const [dates, setDates] = useState<reservredDatesArrayType[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [userId, setUserId] = useState<null | string>(null);
   const [isAdmin, setIsAdmin] = useState(false);

@@ -6,17 +6,19 @@ import { AdapterMomentJalaali } from "@mui/x-date-pickers/AdapterMomentJalaali";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Button } from "@mui/material";
 
-import axios from "axios";
 import { Moment } from "jalali-moment";
 import moment from "jalali-moment";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../Supabase/initialize";
+import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
+import { reservredDatesArrayType } from "../../types/types";
 
 const ManageReserves = ({
   setDates,
 }: {
-  setDates: React.Dispatch<React.SetStateAction<never[]>>;
+  setDates: React.Dispatch<React.SetStateAction<reservredDatesArrayType[]>>;
 }) => {
   const [dateValue, setDateValue] = useState<Moment | null>(null);
   const [date, setDate] = useState("");
@@ -65,13 +67,20 @@ const ManageReserves = ({
         onClick={async () => {
           try {
             // insert new date into db
-            await axios.post("http://localhost:3000/reserves", { date, time });
+            const { error } = await supabase.from("reserves").insert([
+              {
+                date,
+                time,
+                id: uniqueIdGenerator(),
+              },
+            ]);
+
+            if (error) throw error;
 
             // update the dates
-            const { data: dates } = await axios.get(
-              "http://localhost:3000/reserves",
-            );
-            setDates(dates);
+            const { data: dates } = await supabase.from("reserves").select("*");
+
+            if (dates) setDates(dates);
 
             navigate("/admin/see");
           } catch (error) {

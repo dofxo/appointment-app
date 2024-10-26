@@ -4,13 +4,14 @@ import { HiTrash } from "react-icons/hi";
 import noDataImage from "../../assets/no-data.png";
 
 import "./styles.scss";
+import { reservredDatesArrayType } from "../../types/types";
 
 const SeeReserves = ({
   dates,
   setDates,
 }: {
-  dates: never[];
-  setDates: React.Dispatch<React.SetStateAction<never[]>>;
+  dates: reservredDatesArrayType[];
+  setDates: React.Dispatch<React.SetStateAction<reservredDatesArrayType[]>>;
 }) => {
   useEffect(() => {
     (async () => {
