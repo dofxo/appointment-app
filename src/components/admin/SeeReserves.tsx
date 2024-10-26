@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { HiTrash } from "react-icons/hi";
+import noDataImage from "../../assets/no-data.png";
 
 import "./styles.scss";
 
@@ -56,10 +57,7 @@ const SeeReserves = ({
         ) : (
           <div className="self-center flex items-center gap-5">
             <span className="text-white">داده ای یافت نشد</span>
-            <img
-              className="w-[100px]"
-              src="/appointment-app/assets/no-data.png"
-            />
+            <img className="w-[100px]" src={noDataImage} />
           </div>
         )}
       </div>
