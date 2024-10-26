@@ -15,8 +15,6 @@ import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
 
-import { useRef } from "react";
-
 const ManageReserves = ({
   setDates,
 }: {

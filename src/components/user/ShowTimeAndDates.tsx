@@ -21,7 +21,7 @@ const ShowTimeAndDates = ({
   selectedDate?: string;
   dateId?: string;
   setForceRender?: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowState: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
+  setShowState?: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
 }) => {
   const [loading, setLoading] = useState(false);
   return (
