@@ -5,6 +5,8 @@ import noDataImage from "../../assets/no-data.png";
 
 import "./styles.scss";
 import { reservredDatesArrayType } from "../../types/types";
+import { getReserves } from "../../services/services";
+import { supabase } from "../../Supabase/initialize";
 
 const SeeReserves = ({
   dates,
@@ -15,8 +17,8 @@ const SeeReserves = ({
 }) => {
   useEffect(() => {
     (async () => {
-      const { data: dates } = await axios.get("http://localhost:3000/reserves");
-      setDates(dates);
+      const { data: reserves } = await getReserves();
+      if (reserves) setDates(reserves);
     })();
   }, []);
   return (
@@ -41,14 +43,19 @@ const SeeReserves = ({
               <p
                 className="text-red-500 cursor-pointer flex justify-center items-center "
                 onClick={async () => {
-                  await axios.delete(
-                    `http://localhost:3000/reserves/${date.id}`,
-                  );
+                  try {
+                    const { error } = await supabase
+                      .from("reserves")
+                      .delete()
+                      .eq("id", date.id);
 
-                  const { data: reservedDates } = await axios.get(
-                    "http://localhost:3000/reserves",
-                  );
-                  setDates(reservedDates);
+                    if (error) throw error;
+
+                    const { data: reserves } = await getReserves();
+                    if (reserves) setDates(reserves);
+                  } catch (error) {
+                    console.error(error);
+                  }
                 }}
               >
                 <HiTrash className="w-[30px] h-[25px]" />

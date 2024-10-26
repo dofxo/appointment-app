@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Supabase/initialize";
 import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
 import { reservredDatesArrayType } from "../../types/types";
+import { getReserves } from "../../services/services";
 
 const ManageReserves = ({
   setDates,
@@ -77,10 +78,8 @@ const ManageReserves = ({
 
             if (error) throw error;
 
-            // update the dates
-            const { data: dates } = await supabase.from("reserves").select("*");
-
-            if (dates) setDates(dates);
+            const { data: reserves } = await getReserves();
+            if (reserves) setDates(reserves);
 
             navigate("/admin/see");
           } catch (error) {
