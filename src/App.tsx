@@ -31,13 +31,6 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { pathname } = location;
-    const filteredPathName = pathname.replace(/[\/\\]/g, "");
-
-    setShowAdmin(filteredPathName.includes("admin"));
-  }, []);
-
-  useEffect(() => {
     (async () => {
       setIsLoading(true);
 
@@ -52,11 +45,15 @@ const App = () => {
             .eq("id", userId)
             .single();
 
-          setUsername(data.username);
+          if (data.username) setUsername(data.username);
 
           if (data.isAdmin) setIsAdmin(true);
 
           navigate(data.isAdmin ? "/admin" : "/user");
+
+          const { pathname } = location;
+          const filteredPathName = pathname.replace(/[\/\\]/g, "");
+          setShowAdmin(filteredPathName.includes("admin"));
 
           if (error) throw error;
         } catch (error) {
