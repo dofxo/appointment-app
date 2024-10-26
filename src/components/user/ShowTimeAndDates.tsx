@@ -1,6 +1,8 @@
 import { Card } from "@mui/material";
 import { supabase } from "../../Supabase/initialize";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ShowTimeAndDates = ({
   date,
@@ -17,6 +19,7 @@ const ShowTimeAndDates = ({
   selectedDate?: string;
   dateId?: string;
 }) => {
+  const [loading, setLoading] = useState(false);
   return (
     <Card
       variant="outlined"
@@ -28,6 +31,7 @@ const ShowTimeAndDates = ({
           }
           // select time step
           else {
+            setLoading(true);
             const { error } = await supabase
               .from("reserves")
               .update({ userName })
@@ -53,11 +57,13 @@ const ShowTimeAndDates = ({
           });
         } catch (error) {
           console.error(error);
+        } finally {
+          setLoading(false);
         }
       }}
       className="border p-2 rounded cursor-pointer !bg-[#00A9FF]"
     >
-      {date}
+      {loading ? <CircularProgress size="15px" /> : date}
     </Card>
   );
 };

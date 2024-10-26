@@ -4,8 +4,7 @@ import { HiOutlineClock, HiOutlineCalendar } from "react-icons/hi";
 
 import { AdapterMomentJalaali } from "@mui/x-date-pickers/AdapterMomentJalaali";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Button } from "@mui/material";
-
+import LoadingButton from "@mui/lab/LoadingButton";
 import { Moment } from "jalali-moment";
 import moment from "jalali-moment";
 
@@ -16,6 +15,8 @@ import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
 
+import { useRef } from "react";
+
 const ManageReserves = ({
   setDates,
 }: {
@@ -25,6 +26,7 @@ const ManageReserves = ({
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const navigate = useNavigate();
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   useEffect(() => {
     const persianDateTemplate = moment(dateValue?.toDate()).locale("fa");
@@ -63,10 +65,13 @@ const ManageReserves = ({
           </p>
         </div>
       </Card>
-      <Button
+      <LoadingButton
         variant="contained"
+        loading={buttonLoading}
         onClick={async () => {
           try {
+            setButtonLoading(true);
+
             // insert new date into db
             const { error } = await supabase.from("reserves").insert([
               {
@@ -84,12 +89,14 @@ const ManageReserves = ({
             navigate("/admin/see");
           } catch (error) {
             console.error(error);
+          } finally {
+            setButtonLoading(false);
           }
         }}
         className="text-white rounded p-1 !font-[unset]"
       >
         تایید زمان و تاریخ
-      </Button>
+      </LoadingButton>
     </div>
   );
 };

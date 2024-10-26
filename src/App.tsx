@@ -32,28 +32,26 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      setIsLoading(true);
-
       const userId = localStorage.getItem("token") || null;
       setUserId(userId);
 
       if (userId) {
         try {
+          setIsLoading(true);
+
           const { error, data } = await supabase
             .from("users")
             .select("*")
             .eq("id", userId)
             .single();
 
-          if (data.username) setUsername(data.username);
+          if (data) {
+            if (data.username) setUsername(data.username);
 
-          if (data.isAdmin) setIsAdmin(true);
+            if (data.isAdmin) setIsAdmin(true);
 
-          navigate(data.isAdmin ? "/admin" : "/user");
-
-          const { pathname } = location;
-          const filteredPathName = pathname.replace(/[\/\\]/g, "");
-          setShowAdmin(filteredPathName.includes("admin"));
+            navigate(data.isAdmin ? "/admin" : "/user");
+          }
 
           if (error) throw error;
         } catch (error) {
@@ -66,6 +64,12 @@ const App = () => {
       setIsLoading(false);
     })();
   }, [userId]);
+
+  useEffect(() => {
+    const { pathname } = location;
+    const filteredPathName = pathname.replace(/[\/\\]/g, "");
+    setShowAdmin(filteredPathName.includes("admin"));
+  }, [isAdmin]);
 
   return (
     <AdminContext.Provider value={{ setShowAdmin, showAdmin }}>
