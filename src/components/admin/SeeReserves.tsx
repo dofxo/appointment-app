@@ -49,7 +49,7 @@ const SeeReserves = ({
   return (
     <>
       <div className="text-[#00A9FF] font-bold text-xl">لیست رزرو ها</div>
-      <div className="flex flex-col max-w-[800px] gap-10 mt-10 bg-gray-600 p-5 rounded-[20px]">
+      <div className="flex flex-col max-w-[800px] gap-10 mt-10 bg-gray-600 p-5 rounded-[20px] mb-[50px]">
         <div className="grid grid-cols-4 gap-10 text-white text-xl border-b-black border-b pb-2">
           <p>تاریخ</p>
           <p>زمان</p>
