@@ -1,4 +1,5 @@
 {
+  "homepage": "https://dofxo.github.io/appointment-app",
   "name": "appointment-app",
   "private": true,
   "version": "0.0.0",
@@ -9,7 +10,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "concurrently \"npm run db\" \"npm run dev\"",
-    "db": "json-server ./src/db/db.json"
+    "db": "json-server ./src/db/db.json",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -45,6 +48,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "gh-pages": "^6.2.0",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10",
     "typescript": "^5.2.2",
