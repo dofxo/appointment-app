@@ -1,30 +1,83 @@
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { Button } from "@mui/material";
-
-import { useState, useRef } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Typography,
+} from "@mui/material";
+import { useState, useRef, useEffect } from "react";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.scss";
 
 import DateStep from "./DateStep";
 import TimeStep from "./TimeStep";
+import { supabase } from "../../Supabase/initialize";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const UserPage = ({ userName }: { userName: string }) => {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const submitButtonRef = useRef<null | HTMLButtonElement>(null);
   const [showState, setShowState] = useState<"reserves" | "new">("reserves");
+  const [loading, setLoading] = useState(false);
+  const [reserveInfo, setReserveInfo] = useState<null | {
+    id: string;
+    created_at: string;
+    date: string;
+    time: string;
+    userName: string;
+  }>();
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [forceRender, setForceRender] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const { data: user, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", localStorage.getItem("token"))
+          .single();
+
+        const reservedDate = user.reserve;
+
+        if (!reservedDate) return;
+
+        const { data: reseve, error: error2 } = await supabase
+          .from("reserves")
+          .select("*")
+          .eq("id", reservedDate)
+          .single();
+
+        setReserveInfo(reseve);
+
+        if (error) throw error;
+        if (error2) throw error2;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [forceRender]);
 
   return (
     <div className="">
       <div className="button-wrapper flex gap-2 justify-center mb-[60px]">
-        <Button
-          variant="contained"
-          className="!font-[inherit]"
-          onClick={() => setShowState("new")}
-          style={{ color: showState === "new" ? "blue" : "" }}
-        >
-          رزرو جدید
-        </Button>
+        {!reserveInfo ? (
+          <Button
+            variant="contained"
+            className="!font-[inherit]"
+            onClick={() => setShowState("new")}
+            style={{ color: showState === "new" ? "blue" : "" }}
+          >
+            رزرو جدید
+          </Button>
+        ) : null}
         <Button
           onClick={() => setShowState("reserves")}
           variant="contained"
@@ -35,7 +88,74 @@ const UserPage = ({ userName }: { userName: string }) => {
         </Button>
       </div>
       {showState === "reserves" ? (
-        "reserves"
+        loading ? (
+          <Box sx={{ width: "30%" }}>
+            <LinearProgress />
+          </Box>
+        ) : !reserveInfo ? (
+          <span className="text-yellow-500 text-2xl">نوبتی رزرو نشده است.</span>
+        ) : (
+          <Card className="w-[50%] rounded">
+            <CardContent>
+              <Typography
+                gutterBottom
+                component="h1"
+                className="!font-[inherit]"
+              >
+                اطلاعات رزرو
+              </Typography>
+              <Typography variant="body2">
+                <div className="flex flex-col gap-5">
+                  <div className="flex justify-between">
+                    <span>تاریخ:</span>
+                    <span>{reserveInfo?.date || ""}</span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span>زمان:</span>
+                    <span>{reserveInfo?.time || ""}</span>
+                  </div>
+                </div>
+              </Typography>
+            </CardContent>
+            <CardActions className="flex justify-center">
+              <LoadingButton
+                loading={buttonLoading}
+                size="small"
+                variant="contained"
+                className="!bg-red-500 w-[200px]"
+                onClick={async () => {
+                  try {
+                    setButtonLoading(true);
+
+                    const { error: error } = await supabase
+                      .from("users")
+                      .update({ reserve: null })
+                      .eq("id", localStorage.getItem("token"))
+                      .select();
+
+                    const { error: error2 } = await supabase
+                      .from("reserves")
+                      .update({ userName: null })
+                      .eq("id", reserveInfo.id)
+                      .select();
+
+                    setReserveInfo(null);
+
+                    if (error) throw error;
+                    if (error2) throw error2;
+                  } catch (error) {
+                    console.error(error);
+                  } finally {
+                    setButtonLoading(false);
+                  }
+                }}
+              >
+                کنسل نوبت
+              </LoadingButton>
+            </CardActions>
+          </Card>
+        )
       ) : (
         <>
           {step === 1 && (
@@ -50,6 +170,8 @@ const UserPage = ({ userName }: { userName: string }) => {
               userName={userName}
               selectedDate={selectedDate}
               setStep={setStep}
+              setForceRender={setForceRender}
+              setShowState={setShowState}
             />
           )}
 

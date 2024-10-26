@@ -9,10 +9,14 @@ const TimeStep = ({
   userName = "کاربر",
   selectedDate,
   setStep,
+  setForceRender,
+  setShowState,
 }: {
   userName: string;
   selectedDate: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  setForceRender: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowState: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
 }) => {
   const [reservedTimes, setReservedTime] = useState<reservredDatesArrayType>(
     [],
@@ -52,6 +56,8 @@ const TimeStep = ({
               setStep={setStep}
               selectedDate={selectedDate}
               userName={userName}
+              setForceRender={setForceRender}
+              setShowState={setShowState}
             />
           ))
         )}

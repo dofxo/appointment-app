@@ -11,6 +11,8 @@ const ShowTimeAndDates = ({
   userName,
   selectedDate,
   dateId,
+  setForceRender,
+  setShowState,
 }: {
   date: string;
   setSelectedDate?: React.Dispatch<React.SetStateAction<string>>;
@@ -18,6 +20,8 @@ const ShowTimeAndDates = ({
   userName?: string;
   selectedDate?: string;
   dateId?: string;
+  setForceRender?: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowState: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
 }) => {
   const [loading, setLoading] = useState(false);
   return (
@@ -38,7 +42,17 @@ const ShowTimeAndDates = ({
               .eq("id", dateId)
               .select();
 
+            const { error: error2 } = await supabase
+              .from("users")
+              .update({ reserve: dateId })
+              .eq("username", userName)
+              .select();
+
             if (error) throw error;
+            if (error2) throw error2;
+
+            if (setForceRender) setForceRender((prev) => !prev);
+            if (setShowState) setShowState("reserves");
 
             toast.success(
               `نوبت شما در تاریخ ${selectedDate}, ${date} با موفقیت ثبت شد`,
