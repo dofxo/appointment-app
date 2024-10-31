@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import "./styles.scss";
 import { NavLink } from "react-router-dom";
+import TitleAdder from "../../HOC/TitleAdder";
 
 const AdminPage = () => {
   const navigationItmes = [
@@ -35,4 +36,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default TitleAdder(AdminPage, "مدیریت");

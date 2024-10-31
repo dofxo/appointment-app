@@ -16,6 +16,7 @@ import DateStep from "./DateStep";
 import TimeStep from "./TimeStep";
 import { supabase } from "../../Supabase/initialize";
 import LoadingButton from "@mui/lab/LoadingButton";
+import TitleAdder from "../../HOC/TitleAdder";
 
 const UserPage = ({ userName }: { userName: string }) => {
   const [step, setStep] = useState(1);
@@ -206,4 +207,4 @@ const UserPage = ({ userName }: { userName: string }) => {
   );
 };
 
-export default UserPage;
+export default TitleAdder(UserPage, "کاربر");
