@@ -11,6 +11,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Field, Formik, FormikErrors, FormikTouched, Form } from "formik";
 import { FormValues } from "../../types/types";
 import { authSchema } from "../../schemas/authSchema";
+import LoadingButton from "@mui/lab/LoadingButton";
+import toast from "react-hot-toast";
 
 const Settings = ({ userId }: { userId: string | null }) => {
   const [userInfo, setUserInfo] = useState<{
@@ -18,19 +20,12 @@ const Settings = ({ userId }: { userId: string | null }) => {
     password: string;
   }>();
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
-  const [showPasswords, setShowPasswords] = useState<{
-    [key: string]: boolean;
-  }>({
-    confirmPassword: false,
-    password: false,
-  });
+  const [showPasswords, setShowPasswords] = useState(false);
 
-  const toggleShowPassword = (name: string) => {
-    setShowPasswords((prev) => ({
-      ...prev,
-      [name]: !prev[name],
-    }));
+  const toggleShowPassword = () => {
+    setShowPasswords((prev) => !prev);
   };
 
   const inputs = [
@@ -75,14 +70,34 @@ const Settings = ({ userId }: { userId: string | null }) => {
     })();
   }, []);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (values: any) => {
+    try {
+      setButtonLoading(true);
+      const { error } = await supabase
+        .from("users")
+        .update({ password: values.password, username: values.username })
+        .eq("id", userId)
+        .select();
+
+      toast.success("تغییرات با موفقیت انجام شد");
+
+      if (error) throw error;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setButtonLoading(false);
+    }
+  };
 
   return (
     <>
       {loading ? (
         <CircularProgress size={70} />
       ) : (
-        <div id="userInfoWrapper" className="flex flex-col justify-start">
+        <div
+          id="userInfoWrapper"
+          className="flex flex-col justify-center items-center gap-5"
+        >
           <Formik<FormValues>
             onSubmit={handleSubmit}
             validationSchema={authSchema}
@@ -100,18 +115,16 @@ const Settings = ({ userId }: { userId: string | null }) => {
               errors: FormikErrors<FormValues>;
               touched: FormikTouched<FormValues>;
             }) => (
-              <Form className="flex flex-col gap-1 max-w-[300px]" id="userInfo">
+              <Form className="flex flex-col gap-5 " id="userInfo">
                 {inputs.map((inputInfo, idx) => (
                   <Field name={inputInfo.name} key={idx}>
                     {({ field }: any) => (
                       <TextField
                         {...field}
-                        size="small"
                         variant="standard"
                         label={inputInfo.label}
                         type={
-                          inputInfo.type === "password" &&
-                          !showPasswords[inputInfo.name]
+                          inputInfo.type === "password" && !showPasswords
                             ? "password"
                             : "text"
                         }
@@ -122,16 +135,14 @@ const Settings = ({ userId }: { userId: string | null }) => {
                                   <InputAdornment position="end">
                                     <IconButton
                                       aria-label={
-                                        showPasswords[inputInfo.name]
+                                        showPasswords
                                           ? "hide the password"
                                           : "display the password"
                                       }
-                                      onClick={() =>
-                                        toggleShowPassword(inputInfo.name)
-                                      }
+                                      onClick={toggleShowPassword}
                                       edge="end"
                                     >
-                                      {showPasswords[inputInfo.name] ? (
+                                      {showPasswords ? (
                                         <VisibilityOff />
                                       ) : (
                                         <Visibility />
@@ -156,6 +167,14 @@ const Settings = ({ userId }: { userId: string | null }) => {
                     )}
                   </Field>
                 ))}
+                <LoadingButton
+                  loading={buttonLoading}
+                  variant="contained"
+                  type="submit"
+                  className="!font-[inherit]"
+                >
+                  ذخیره
+                </LoadingButton>
               </Form>
             )}
           </Formik>

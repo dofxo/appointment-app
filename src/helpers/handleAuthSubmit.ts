@@ -11,7 +11,7 @@ export const handleSubmit = async ({
   setLoading,
   setUserId,
 }: {
-  values: AuthFormValues;
+  values: FormValues;
   isLogin: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
