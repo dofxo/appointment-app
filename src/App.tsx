@@ -18,6 +18,7 @@ import AuthPrompt from "./components/authPrompt/AuthPrompt";
 import CircularProgress from "@mui/material/CircularProgress";
 import { reservredDatesArrayType } from "./types/types";
 import TitleAdder from "./HOC/TitleAdder";
+import Settings from "./components/general/Settings";
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
@@ -168,6 +169,10 @@ const App = () => {
                   />
                 </Route>
                 <Route path="/user" element={<User userName={username} />} />
+                <Route
+                  path="/settings"
+                  element={<Settings userId={userId} />}
+                />
               </Routes>
             </div>
           </center>
