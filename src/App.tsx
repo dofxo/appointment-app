@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import Admin from "./components/admin/Admin";
 import User from "./components/user/User";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Link } from "react-router-dom";
 import SeeReserves from "./components/admin/SeeReserves";
 import ManageReserves from "./components/admin/ManageReserves";
 
@@ -27,6 +27,7 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [inSettings, setInsettings] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -87,7 +88,8 @@ const App = () => {
                 </div>
               )}
               <div className="flex gap-2 mt-[15px] text-white p-2 rounded !absolute top-5 left-5 !font-[unset]">
-                {!userId ? (
+                {/*not logged in*/}
+                {!userId && (
                   <Button
                     variant="contained"
                     onClick={() => {
@@ -97,19 +99,38 @@ const App = () => {
                   >
                     ورود/عضویت
                   </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setToken(null);
-                      setUserId(null);
-                      setUsername("");
-                      setIsAdmin(false);
-                    }}
-                    className="!font-[unset]"
-                  >
-                    خروج از حساب
-                  </Button>
+                )}
+
+                {userId && (
+                  <>
+                    <Link
+                      to={
+                        !inSettings
+                          ? "/settings"
+                          : isAdmin
+                            ? "/admin/"
+                            : "/user/"
+                      }
+                      onClick={() => setInsettings(!inSettings)}
+                    >
+                      <Button variant="contained" className="!font-[unset]">
+                        {!inSettings ? "تنظیمات" : "خانه"}
+                      </Button>
+                    </Link>
+
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        setToken(null);
+                        setUserId(null);
+                        setUsername("");
+                        setIsAdmin(false);
+                      }}
+                      className="!font-[unset]"
+                    >
+                      خروج از حساب
+                    </Button>
+                  </>
                 )}
 
                 {isAdmin && (
