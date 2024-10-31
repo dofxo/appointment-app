@@ -17,7 +17,6 @@ import setToken from "./helpers/setToken";
 import AuthPrompt from "./components/authPrompt/AuthPrompt";
 import CircularProgress from "@mui/material/CircularProgress";
 import { reservredDatesArrayType } from "./types/types";
-import { Helmet } from "react-helmet-async";
 import TitleAdder from "./HOC/TitleAdder";
 
 const App = () => {
