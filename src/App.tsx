@@ -10,11 +10,11 @@ import ManageReserves from "./components/admin/ManageReserves";
 import { AdminContext } from "./context/appointmentContent";
 import { useLocation } from "react-router-dom";
 
-import AuthModal from "./components/Modals/AuthModal";
+import AuthModal from "./components/general/AuthModal";
 import { Toaster } from "react-hot-toast";
 import { supabase } from "./Supabase/initialize";
 import setToken from "./helpers/setToken";
-import AuthPrompt from "./components/AuthPrompt/AuthPrompt";
+import AuthPrompt from "./components/authPrompt/AuthPrompt";
 import CircularProgress from "@mui/material/CircularProgress";
 import { reservredDatesArrayType } from "./types/types";
 
