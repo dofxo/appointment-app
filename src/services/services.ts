@@ -5,3 +5,9 @@ export const getReserves = async () => {
 
   return { data };
 };
+
+export const getUsers = async () => {
+  const { data } = await supabase.from("users").select("*");
+
+  return { data };
+};

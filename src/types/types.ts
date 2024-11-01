@@ -1,8 +1,12 @@
-export type reservredDatesArrayType = {
+export type reserveDateType = {
   date: string;
   id: string;
   time: string;
-}[];
+  profile_picture: string;
+  userName: string;
+};
+
+export type reservredDatesArrayType = reserveDateType[];
 
 export interface InputInfo {
   name: "password" | "confirmPassword" | "username"; // restrict to known values
