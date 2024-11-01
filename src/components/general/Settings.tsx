@@ -16,7 +16,6 @@ import { authSchema } from "../../schemas/authSchema";
 import LoadingButton from "@mui/lab/LoadingButton";
 import toast from "react-hot-toast";
 import readURL from "../../helpers/readUrl";
-import noDataImage from "../../assets/no-data.png";
 
 const Settings = ({ userId }: { userId: string | null }) => {
   const [userInfo, setUserInfo] = useState<{
@@ -26,7 +25,7 @@ const Settings = ({ userId }: { userId: string | null }) => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [showPasswords, setShowPasswords] = useState(false);
-  const imageRef = useRef();
+  const [avatarSrc, setAvatarSrc] = useState("");
 
   const toggleShowPassword = () => {
     setShowPasswords((prev) => !prev);
@@ -180,11 +179,11 @@ const Settings = ({ userId }: { userId: string | null }) => {
                         <>
                           <label htmlFor="profilePicture">
                             <Avatar
-                              imgProps={{}}
                               id="profilePictureImg"
-                              className="cursor-pointer"
+                              className="cursor-pointer max-w-[200px]"
                               alt={userInfo?.username}
                               sx={{ width: 80, height: 80 }}
+                              src={avatarSrc}
                             />
                           </label>
                           <Input
@@ -195,17 +194,11 @@ const Settings = ({ userId }: { userId: string | null }) => {
                             onChange={async (
                               e: ChangeEvent<HTMLInputElement>,
                             ) => {
-                              //TODO: fix this image rendering
                               const file = e.target.files?.[0];
                               setFieldValue("profilePicture", file);
 
-                              const url = await readURL(file);
-
-                              const img =
-                                document.getElementById("profilePictureImg");
-                              img.src = noDataImage;
-
-                              console.log(img);
+                              const url = (await readURL(file)) as string;
+                              setAvatarSrc(url);
                             }}
                           />
                         </>
