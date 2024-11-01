@@ -14,7 +14,7 @@ import AuthModal from "./components/general/AuthModal";
 import { Toaster } from "react-hot-toast";
 import { supabase } from "./Supabase/initialize";
 import setToken from "./helpers/setToken";
-import AuthPrompt from "./components/authPrompt/AuthPrompt";
+import AuthPrompt from "./components/AuthPrompt/AuthPrompt";
 import CircularProgress from "@mui/material/CircularProgress";
 import { reservredDatesArrayType } from "./types/types";
 import TitleAdder from "./HOC/TitleAdder";

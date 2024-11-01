@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { supabase } from "../../Supabase/initialize";
 import {
+  Avatar,
   CircularProgress,
   IconButton,
+  Input,
   InputAdornment,
   TextField,
 } from "@mui/material";
@@ -13,6 +15,8 @@ import { FormValues } from "../../types/types";
 import { authSchema } from "../../schemas/authSchema";
 import LoadingButton from "@mui/lab/LoadingButton";
 import toast from "react-hot-toast";
+import readURL from "../../helpers/readUrl";
+import noDataImage from "../../assets/no-data.png";
 
 const Settings = ({ userId }: { userId: string | null }) => {
   const [userInfo, setUserInfo] = useState<{
@@ -21,14 +25,17 @@ const Settings = ({ userId }: { userId: string | null }) => {
   }>();
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
-
   const [showPasswords, setShowPasswords] = useState(false);
+  const imageRef = useRef();
 
   const toggleShowPassword = () => {
     setShowPasswords((prev) => !prev);
   };
 
   const inputs = [
+    {
+      type: "file",
+    },
     {
       value: userInfo?.username || "",
       name: "username",
@@ -37,9 +44,9 @@ const Settings = ({ userId }: { userId: string | null }) => {
     },
     {
       value: userInfo?.password || "",
-      name: "password",
+      name: "confirmPassword",
       type: "password",
-      label: "رمز عبور",
+      label: "تایید رمز عبور",
     },
     {
       value: userInfo?.password || "",
@@ -72,6 +79,7 @@ const Settings = ({ userId }: { userId: string | null }) => {
 
   const handleSubmit = async (values: any) => {
     try {
+      console.log(values);
       setButtonLoading(true);
       const { error } = await supabase
         .from("users")
@@ -105,66 +113,104 @@ const Settings = ({ userId }: { userId: string | null }) => {
               username: userInfo?.username || "",
               password: userInfo?.password || "",
               confirmPassword: userInfo?.password || "",
+              profilePicture: "",
             }}
             enableReinitialize
           >
             {({
               errors,
               touched,
+              setFieldValue,
             }: {
               errors: FormikErrors<FormValues>;
               touched: FormikTouched<FormValues>;
+              setFieldValue: any;
             }) => (
               <Form className="flex flex-col gap-5 " id="userInfo">
                 {inputs.map((inputInfo, idx) => (
                   <Field name={inputInfo.name} key={idx}>
-                    {({ field }: any) => (
-                      <TextField
-                        {...field}
-                        variant="standard"
-                        label={inputInfo.label}
-                        type={
-                          inputInfo.type === "password" && !showPasswords
-                            ? "password"
-                            : "text"
-                        }
-                        InputProps={
-                          inputInfo.type === "password"
-                            ? {
-                                endAdornment: (
-                                  <InputAdornment position="end">
-                                    <IconButton
-                                      aria-label={
-                                        showPasswords
-                                          ? "hide the password"
-                                          : "display the password"
-                                      }
-                                      onClick={toggleShowPassword}
-                                      edge="end"
-                                    >
-                                      {showPasswords ? (
-                                        <VisibilityOff />
-                                      ) : (
-                                        <Visibility />
-                                      )}
-                                    </IconButton>
-                                  </InputAdornment>
-                                ),
-                              }
-                            : undefined
-                        }
-                        helperText={
-                          touched[inputInfo.name as keyof FormValues] &&
-                          errors[inputInfo.name as keyof FormValues]
-                            ? errors[inputInfo.name as keyof FormValues]
-                            : ""
-                        }
-                        error={Boolean(
-                          touched[inputInfo.name as keyof FormValues] &&
-                            errors[inputInfo.name as keyof FormValues],
-                        )}
-                      />
-                    )}
+                    {({ field }: any) =>
+                      inputInfo.type !== "file" ? (
+                        <TextField
+                          {...field}
+                          variant="standard"
+                          label={inputInfo.label}
+                          type={
+                            inputInfo.type === "password" && !showPasswords
+                              ? "password"
+                              : "text"
+                          }
+                          InputProps={
+                            inputInfo.type === "password"
+                              ? {
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      <IconButton
+                                        aria-label={
+                                          showPasswords
+                                            ? "hide the password"
+                                            : "display the password"
+                                        }
+                                        onClick={toggleShowPassword}
+                                        edge="end"
+                                      >
+                                        {showPasswords ? (
+                                          <VisibilityOff />
+                                        ) : (
+                                          <Visibility />
+                                        )}
+                                      </IconButton>
+                                    </InputAdornment>
+                                  ),
+                                }
+                              : undefined
+                          }
+                          helperText={
+                            touched[inputInfo.name as keyof FormValues] &&
+                            errors[inputInfo.name as keyof FormValues]
+                              ? errors[inputInfo.name as keyof FormValues]
+                              : ""
+                          }
+                          error={Boolean(
+                            touched[inputInfo.name as keyof FormValues] &&
+                              errors[inputInfo.name as keyof FormValues],
+                          )}
+                        />
+                      ) : (
+                        <>
+                          <label htmlFor="profilePicture">
+                            <Avatar
+                              imgProps={{}}
+                              id="profilePictureImg"
+                              className="cursor-pointer"
+                              alt={userInfo?.username}
+                              sx={{ width: 80, height: 80 }}
+                            />
+                          </label>
+                          <Input
+                            className="invisible h-0"
+                            id="profilePicture"
+                            type="file"
+                            name="profilePicture"
+                            onChange={async (
+                              e: ChangeEvent<HTMLInputElement>,
+                            ) => {
+                              //TODO: fix this image rendering
+                              const file = e.target.files?.[0];
+                              setFieldValue("profilePicture", file);
+
+                              const url = await readURL(file);
+
+                              const img =
+                                document.getElementById("profilePictureImg");
+                              img.src = noDataImage;
+
+                              console.log(img);
+                            }}
+                          />
+                        </>
+                      )
+                    }
                   </Field>
                 ))}
                 <LoadingButton

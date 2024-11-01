@@ -12,4 +12,13 @@ export const authSchema = (isLogin: boolean) =>
           .required("تکرار رمز عبور اجباری است"),
       otherwise: (schema) => schema.notRequired(),
     }),
+    profilePicture: yup
+      .mixed()
+      .required("required")
+      .test("fileSize", "حجم فایل نباید بیشتر از 3MB باشد.", (value) => {
+        if (value) {
+          return value.size <= 3145728;
+        }
+        return true;
+      }),
   });
