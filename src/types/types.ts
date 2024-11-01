@@ -20,7 +20,7 @@ export interface FormValues {
   password: string;
   confirmPassword: string;
   username: string;
-  profilePicture: string;
+  profilePicture?: string;
 }
 
 export type inputTypes = null | HTMLInputElement;
