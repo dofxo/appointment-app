@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { supabase } from "../../Supabase/initialize";
 import {
   Avatar,
@@ -16,11 +16,13 @@ import { authSchema } from "../../schemas/authSchema";
 import LoadingButton from "@mui/lab/LoadingButton";
 import toast from "react-hot-toast";
 import readURL from "../../helpers/readUrl";
+import uploadProfilePicture from "../../helpers/uploadProfilePicture";
 
 const Settings = ({ userId }: { userId: string | null }) => {
   const [userInfo, setUserInfo] = useState<{
     username: string;
     password: string;
+    profile_picture: string;
   }>();
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -43,9 +45,9 @@ const Settings = ({ userId }: { userId: string | null }) => {
     },
     {
       value: userInfo?.password || "",
-      name: "confirmPassword",
+      name: "password",
       type: "password",
-      label: "تایید رمز عبور",
+      label: "رمز عبور",
     },
     {
       value: userInfo?.password || "",
@@ -76,9 +78,12 @@ const Settings = ({ userId }: { userId: string | null }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (userInfo) setAvatarSrc(userInfo?.profile_picture);
+  }, [userInfo]);
+
   const handleSubmit = async (values: any) => {
     try {
-      console.log(values);
       setButtonLoading(true);
       const { error } = await supabase
         .from("users")
@@ -125,7 +130,7 @@ const Settings = ({ userId }: { userId: string | null }) => {
               touched: FormikTouched<FormValues>;
               setFieldValue: any;
             }) => (
-              <Form className="flex flex-col gap-5 " id="userInfo">
+              <Form className="flex flex-col gap-5 max-w-[275px]" id="userInfo">
                 {inputs.map((inputInfo, idx) => (
                   <Field name={inputInfo.name} key={idx}>
                     {({ field }: any) =>
@@ -177,10 +182,13 @@ const Settings = ({ userId }: { userId: string | null }) => {
                         />
                       ) : (
                         <>
-                          <label htmlFor="profilePicture">
+                          <label
+                            htmlFor="profilePicture"
+                            className="max-w-[80px] self-center"
+                          >
                             <Avatar
                               id="profilePictureImg"
-                              className="cursor-pointer max-w-[200px]"
+                              className="cursor-pointer max-w-[80px]"
                               alt={userInfo?.username}
                               sx={{ width: 80, height: 80 }}
                               src={avatarSrc}
@@ -194,11 +202,20 @@ const Settings = ({ userId }: { userId: string | null }) => {
                             onChange={async (
                               e: ChangeEvent<HTMLInputElement>,
                             ) => {
-                              const file = e.target.files?.[0];
-                              setFieldValue("profilePicture", file);
+                              try {
+                                const file = e.target.files?.[0];
+                                setFieldValue("profilePicture", file);
 
-                              const url = (await readURL(file)) as string;
-                              setAvatarSrc(url);
+                                const url = (await readURL(file)) as string;
+                                setAvatarSrc(url);
+
+                                await uploadProfilePicture(
+                                  userId as string,
+                                  file,
+                                );
+                              } catch (error) {
+                                console.error(error);
+                              }
                             }}
                           />
                         </>
