@@ -14,7 +14,6 @@ export const authSchema = (isLogin: boolean) =>
     }),
     profilePicture: yup
       .mixed()
-      .required("required")
       .test("fileSize", "حجم فایل نباید بیشتر از 3MB باشد.", (value: any) => {
         if (value) {
           return value.size <= 3145728;
