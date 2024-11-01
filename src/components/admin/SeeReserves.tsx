@@ -3,7 +3,7 @@ import { HiTrash } from "react-icons/hi";
 import noDataImage from "../../assets/no-data.png";
 
 import "./styles.scss";
-import { reserveDateType, reservredDatesArrayType } from "../../types/types";
+import { reservredDatesArrayType } from "../../types/types";
 import { getReserves, getUsers } from "../../services/services";
 import { supabase } from "../../Supabase/initialize";
 import { CircularProgress } from "@mui/material";
@@ -15,7 +15,7 @@ const SeeReserves = ({
   dates: reservredDatesArrayType[]; // Ensure dates is typed as an array of reservredDatesArrayType
   setDates: React.Dispatch<React.SetStateAction<reservredDatesArrayType[]>>;
 }) => {
-  const headers = ["تاریخ", "زمان", "رزرو کننده", "تصویر رزرو کننده", "عملیات"];
+  const headers = ["تاریخ", "زمان", "رزرو کننده", "تصویر کاربر", "عملیات"];
 
   useEffect(() => {
     (async () => {

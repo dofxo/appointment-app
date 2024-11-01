@@ -103,6 +103,7 @@ const Settings = ({ userId }: { userId: string | null }) => {
 
   return (
     <>
+      <h1 className="m-20 text-xl text-[#00A9FF]">تنظیمات کاربری</h1>
       {loading ? (
         <CircularProgress size={70} />
       ) : (
