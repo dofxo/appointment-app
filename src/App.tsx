@@ -31,6 +31,7 @@ const App = () => {
   const [userId, setUserId] = useState<null | string>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
+  const [userInfo, setUserInfo] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   const location = useLocation();
@@ -52,6 +53,7 @@ const App = () => {
           if (data) {
             if (data.username) setUsername(data.username);
             if (data.isAdmin) setIsAdmin(true);
+            setUserInfo(data);
             navigate(data.isAdmin ? "/admin" : "/user");
           }
 
@@ -79,17 +81,16 @@ const App = () => {
       {!isLoading ? (
         <>
           <Toaster />
-          <center className="max-w-[1200px] m-[auto] mt-[20px]">
+          <center className="max-w-[1200px] m-[auto] mt-[20px] pt-[75px]">
             <Header
               username={username}
               userId={userId}
               setUserId={setUserId}
               setOpenModal={setOpenModal}
-              setShowAdmin={setShowAdmin}
-              showAdmin={showAdmin}
               isAdmin={isAdmin}
               setIsAdmin={setIsAdmin}
               setUsername={setUsername}
+              userInfo={userInfo}
             />
 
             <AuthModal

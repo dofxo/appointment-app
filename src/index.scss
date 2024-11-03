@@ -13,3 +13,15 @@ body {
     font-family: inherit !important;
   }
 }
+
+ul.MuiList-root {
+  @apply bg-[#1976d2];
+
+  li {
+    @apply text-white transition;
+
+    &:hover {
+      @apply text-[#114a86]
+    }
+  }
+}

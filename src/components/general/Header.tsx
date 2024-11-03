@@ -1,5 +1,16 @@
-import { Button } from "@mui/material";
-import { useState } from "react";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import setToken from "../../helpers/setToken";
 
@@ -11,84 +22,152 @@ const Header = ({
   setUserId,
   setUsername,
   setIsAdmin,
-  showAdmin,
-  setShowAdmin,
+  userInfo,
 }: {
   username: string;
   userId: string | null;
-  showAdmin: boolean;
   isAdmin: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setUserId: React.Dispatch<React.SetStateAction<string | null>>;
   setUsername: React.Dispatch<React.SetStateAction<string>>;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  userInfo: any;
 }) => {
   const [inSettings, setInsettings] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [userProfile, setUserProfile] = useState("");
+
   const navigate = useNavigate();
 
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  useEffect(() => {
+    if (!userInfo) return;
+
+    setUserProfile((prev) => {
+      if (userInfo.profile_picture) {
+        prev = userInfo.profile_picture ?? "";
+      }
+      return prev;
+    });
+  }, [userInfo]);
+
   return (
-    <div id="page-title" className="mb-[40px]">
-      <h1 className="text-3xl text-[#00A9FF]">رزرو نوبت</h1>
-      {username && (
-        <div className="text-[#00A9FF] text-xl   flex gap-2 mt-[15px] p-2 rounded !absolute top-5 right-5 !font-[unset]">
-          <span className="text-bold text-[25px]"> {username}</span> عزیز٬ خوش
-          آمدید.
+    <AppBar>
+      <Toolbar>
+        <div
+          id="header"
+          className="mb-[40px] flex flex-col items-center gap-5 w-full"
+        >
+          <h1 id="page-title" className="text-3xl w-full mt-5">
+            رزرو نوبت
+          </h1>
+          <div
+            id="main-content"
+            className="flex items-center justify-between w-full"
+          >
+            <Box className="flex items-center gap-5" sx={{ flexGrow: 0 }}>
+              <Tooltip title={username ? "بار کردن منو" : ""}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    alt={username}
+                    src={userProfile}
+                    sx={{ width: 60, height: 60 }}
+                  />
+                </IconButton>
+              </Tooltip>
+              {username && (
+                <>
+                  <Typography>{username} عزیز٬ خوش آمدید.</Typography>
+                  <Menu
+                    sx={{ mt: "70px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                    className="flex flex-col"
+                  >
+                    <MenuItem className="w-full" onClick={handleCloseUserMenu}>
+                      <Typography
+                        onClick={() => {
+                          setToken(null);
+                          setUserId(null);
+                          setUsername("");
+                          setIsAdmin(false);
+                        }}
+                        className="!font-[unset]"
+                      >
+                        خروج از حساب
+                      </Typography>
+                    </MenuItem>
+                    {isAdmin && (
+                      <MenuItem
+                        className="w-full"
+                        onClick={handleCloseUserMenu}
+                      >
+                        <Typography
+                          onClick={() => {
+                            isAdmin ? navigate("/user/") : navigate("/admin/");
+                            setIsAdmin((prev) => !prev);
+                          }}
+                          className="!font-[unset]"
+                        >
+                          تغییر به {isAdmin ? "کاربر" : "ادمین"}
+                        </Typography>
+                      </MenuItem>
+                    )}
+                  </Menu>
+                </>
+              )}
+            </Box>
+
+            <div className="button-wrapper flex items-center gap-2 text-white rounded">
+              {!userId && (
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setOpenModal(true);
+                  }}
+                  className="!font-[unset]"
+                >
+                  ورود/عضویت
+                </Button>
+              )}
+
+              {userId && (
+                <>
+                  <Link
+                    to={isAdmin ? "/admin" : "/user"}
+                    onClick={() => setInsettings(!inSettings)}
+                  >
+                    <Button className="!text-white">خانه</Button>
+                  </Link>
+
+                  <Link to="/settings">
+                    <Button className="!text-white">تنظیمات</Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
         </div>
-      )}
-      <div className="flex gap-2 mt-[15px] text-white p-2 rounded !absolute top-5 left-5 !font-[unset]">
-        {!userId && (
-          <Button
-            variant="contained"
-            onClick={() => {
-              setOpenModal(true);
-            }}
-            className="!font-[unset]"
-          >
-            ورود/عضویت
-          </Button>
-        )}
-
-        {userId && (
-          <>
-            <Link
-              to={!inSettings ? "/settings" : isAdmin ? "/admin/" : "/user/"}
-              onClick={() => setInsettings(!inSettings)}
-            >
-              <Button variant="contained" className="!font-[unset]">
-                {!inSettings ? "تنظیمات" : "خانه"}
-              </Button>
-            </Link>
-
-            <Button
-              variant="contained"
-              onClick={() => {
-                setToken(null);
-                setUserId(null);
-                setUsername("");
-                setIsAdmin(false);
-              }}
-              className="!font-[unset]"
-            >
-              خروج از حساب
-            </Button>
-          </>
-        )}
-
-        {isAdmin && (
-          <Button
-            variant="contained"
-            onClick={() => {
-              showAdmin ? navigate("/user/") : navigate("/admin/");
-              setShowAdmin(!showAdmin);
-            }}
-            className="!font-[unset]"
-          >
-            تغییر به {showAdmin ? "کاربر" : "ادمین"}
-          </Button>
-        )}
-      </div>
-    </div>
+      </Toolbar>
+    </AppBar>
   );
 };
 
