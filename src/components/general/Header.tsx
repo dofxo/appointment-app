@@ -109,6 +109,7 @@ const Header = ({
                           setUserId(null);
                           setUsername("");
                           setIsAdmin(false);
+                          setUserProfile("");
                         }}
                         className="!font-[unset]"
                       >
