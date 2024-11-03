@@ -36,6 +36,7 @@ const Header = ({
   const [inSettings, setInsettings] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [userProfile, setUserProfile] = useState("");
+  const [showSwithUserButton, setSwitchUserStatus] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,6 +47,10 @@ const Header = ({
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  useEffect(() => {
+    setSwitchUserStatus(isAdmin);
+  }, []);
 
   useEffect(() => {
     if (!userInfo) return;
@@ -111,12 +116,12 @@ const Header = ({
                           setIsAdmin(false);
                           setUserProfile("");
                         }}
-                        className="!font-[unset]"
+                        className="!font-[unset] !text-sm"
                       >
                         خروج از حساب
                       </Typography>
                     </MenuItem>
-                    {isAdmin && (
+                    {showSwithUserButton && (
                       <MenuItem
                         className="w-full"
                         onClick={handleCloseUserMenu}
@@ -126,7 +131,7 @@ const Header = ({
                             isAdmin ? navigate("/user/") : navigate("/admin/");
                             setIsAdmin((prev) => !prev);
                           }}
-                          className="!font-[unset]"
+                          className="!font-[unset] !text-sm"
                         >
                           تغییر به {isAdmin ? "کاربر" : "ادمین"}
                         </Typography>
@@ -156,11 +161,13 @@ const Header = ({
                     to={isAdmin ? "/admin" : "/user"}
                     onClick={() => setInsettings(!inSettings)}
                   >
-                    <Button className="!text-white">خانه</Button>
+                    <Button className="!text-white !text-[17px]">خانه</Button>
                   </Link>
 
                   <Link to="/settings">
-                    <Button className="!text-white">تنظیمات</Button>
+                    <Button className="!text-white !text-[17px]">
+                      تنظیمات
+                    </Button>
                   </Link>
                 </>
               )}
