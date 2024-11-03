@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import {
   Box,
@@ -7,16 +8,12 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { useState, useRef, useEffect } from "react";
-import LinearProgress from "@mui/material/LinearProgress";
-
-import "./style.scss";
-
-import DateStep from "./DateStep";
-import TimeStep from "./TimeStep";
-import { supabase } from "../../Supabase/initialize";
 import LoadingButton from "@mui/lab/LoadingButton";
+import LinearProgress from "@mui/material/LinearProgress";
+import "./style.scss";
+import { supabase } from "../../Supabase/initialize";
 import TitleAdder from "../../HOC/TitleAdder";
+import { DateStep, TimeStep } from "../";
 
 const UserPage = ({ userName }: { userName: string }) => {
   const [step, setStep] = useState(1);

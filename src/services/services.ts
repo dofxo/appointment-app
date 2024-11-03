@@ -11,3 +11,13 @@ export const getUsers = async () => {
 
   return { data };
 };
+
+export const getUser = async (userId: string) => {
+  const { error, data } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  return { data, error };
+};

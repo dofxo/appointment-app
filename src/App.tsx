@@ -1,24 +1,28 @@
-import { Button } from "@mui/material";
+// package imports
 import { useEffect, useState } from "react";
-
-import Admin from "./components/admin/Admin";
-import User from "./components/user/User";
-import { Routes, Route, useNavigate, Link } from "react-router-dom";
-import SeeReserves from "./components/admin/SeeReserves";
-import ManageReserves from "./components/admin/ManageReserves";
-
-import { AdminContext } from "./context/appointmentContent";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 
-import AuthModal from "./components/general/AuthModal";
-import { Toaster } from "react-hot-toast";
-import { supabase } from "./Supabase/initialize";
-import setToken from "./helpers/setToken";
-import AuthPrompt from "./components/authPrompt/AuthPrompt";
-import CircularProgress from "@mui/material/CircularProgress";
+// helpers
+import { getUser } from "./services/services";
 import { reservredDatesArrayType } from "./types/types";
-import TitleAdder from "./HOC/TitleAdder";
-import Settings from "./components/general/Settings";
+import { AdminContext } from "./context/appointmentContent";
+
+// components
+import CircularProgress from "@mui/material/CircularProgress";
+
+import {
+  Admin,
+  ManageReserves,
+  SeeReserves,
+  User,
+  AuthPrompt,
+  AuthModal,
+  Header,
+  Settings,
+  TitleAdder,
+} from "./components/";
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
@@ -28,31 +32,26 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [inSettings, setInsettings] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
+      // sets userId (can be signed in already)
       const userId = localStorage.getItem("token") || null;
       setUserId(userId);
 
+      // if user is logged in
       if (userId) {
         try {
+          // get the user details from its id and places it
           setIsLoading(true);
-
-          const { error, data } = await supabase
-            .from("users")
-            .select("*")
-            .eq("id", userId)
-            .single();
+          const { error, data } = await getUser(userId);
 
           if (data) {
             if (data.username) setUsername(data.username);
-
             if (data.isAdmin) setIsAdmin(true);
-
             navigate(data.isAdmin ? "/admin" : "/user");
           }
 
@@ -69,6 +68,7 @@ const App = () => {
   }, [userId]);
 
   useEffect(() => {
+    // changes the state based on the path
     const { pathname } = location;
     const filteredPathName = pathname.replace(/[\/\\]/g, "");
     setShowAdmin(filteredPathName.includes("admin"));
@@ -80,74 +80,17 @@ const App = () => {
         <>
           <Toaster />
           <center className="max-w-[1200px] m-[auto] mt-[20px]">
-            <div id="page-title" className="mb-[40px]">
-              <h1 className="text-3xl text-[#00A9FF]">رزرو نوبت</h1>
-              {username && (
-                <div className="text-[#00A9FF] text-xl   flex gap-2 mt-[15px] p-2 rounded !absolute top-5 right-5 !font-[unset]">
-                  <span className="text-bold text-[25px]"> {username}</span>{" "}
-                  عزیز٬ خوش آمدید.
-                </div>
-              )}
-              <div className="flex gap-2 mt-[15px] text-white p-2 rounded !absolute top-5 left-5 !font-[unset]">
-                {/*not logged in*/}
-                {!userId && (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setOpenModal(true);
-                    }}
-                    className="!font-[unset]"
-                  >
-                    ورود/عضویت
-                  </Button>
-                )}
-
-                {userId && (
-                  <>
-                    <Link
-                      to={
-                        !inSettings
-                          ? "/settings"
-                          : isAdmin
-                            ? "/admin/"
-                            : "/user/"
-                      }
-                      onClick={() => setInsettings(!inSettings)}
-                    >
-                      <Button variant="contained" className="!font-[unset]">
-                        {!inSettings ? "تنظیمات" : "خانه"}
-                      </Button>
-                    </Link>
-
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        setToken(null);
-                        setUserId(null);
-                        setUsername("");
-                        setIsAdmin(false);
-                      }}
-                      className="!font-[unset]"
-                    >
-                      خروج از حساب
-                    </Button>
-                  </>
-                )}
-
-                {isAdmin && (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      showAdmin ? navigate("/user/") : navigate("/admin/");
-                      setShowAdmin(!showAdmin);
-                    }}
-                    className="!font-[unset]"
-                  >
-                    تغییر به {showAdmin ? "کاربر" : "ادمین"}
-                  </Button>
-                )}
-              </div>
-            </div>
+            <Header
+              username={username}
+              userId={userId}
+              setUserId={setUserId}
+              setOpenModal={setOpenModal}
+              setShowAdmin={setShowAdmin}
+              showAdmin={showAdmin}
+              isAdmin={isAdmin}
+              setIsAdmin={setIsAdmin}
+              setUsername={setUsername}
+            />
 
             <AuthModal
               openModal={openModal}

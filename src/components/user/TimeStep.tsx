@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import ShowTimeAndDates from "./ShowTimeAndDates";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
 import { Box } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
+import { ShowTimeAndDates } from "../";
 
 const TimeStep = ({
   userName = "کاربر",

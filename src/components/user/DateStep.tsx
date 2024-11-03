@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import ShowDates from "./ShowTimeAndDates.tsx";
 import { getReserves } from "../../services/services.ts";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
+import { ShowTimeAndDates } from "../";
 
 const DateStep = ({
   userName = "کاربر",
@@ -46,7 +46,7 @@ const DateStep = ({
           <>
             {reservedDates.length ? (
               reservedDates.map((date) => (
-                <ShowDates
+                <ShowTimeAndDates
                   date={date}
                   key={date}
                   setSelectedDate={setSelectedDate}
