@@ -1,26 +1,35 @@
 import { useEffect, useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import noDataImage from "../../assets/no-data.png";
-
-import "./styles.scss";
-import { reservredDatesArrayType } from "../../types/types";
 import { getReserves, getUsers } from "../../services/services";
 import { supabase } from "../../Supabase/initialize";
-import { CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Avatar,
+} from "@mui/material";
 
 const SeeReserves = ({
   dates,
   setDates,
 }: {
-  dates: reservredDatesArrayType[]; // Ensure dates is typed as an array of reservredDatesArrayType
-  setDates: React.Dispatch<React.SetStateAction<reservredDatesArrayType[]>>;
+  dates: any[]; // Set dates to return any type
+  setDates: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
   const headers = ["تاریخ", "زمان", "رزرو کننده", "تصویر کاربر", "عملیات"];
 
   useEffect(() => {
     (async () => {
       setTableLoading(true);
-
       const { data: reserves } = await getReserves();
       const { data: users } = await getUsers();
 
@@ -32,7 +41,6 @@ const SeeReserves = ({
       });
 
       if (reserves) setDates(reserves);
-
       setTableLoading(false);
     })();
   }, []);
@@ -67,7 +75,7 @@ const SeeReserves = ({
   };
 
   return (
-    <>
+    <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
       <Typography
         sx={{ color: "primary.main" }}
         variant="h6"
@@ -75,62 +83,100 @@ const SeeReserves = ({
       >
         لیست رزرو ها
       </Typography>
-      <div className="flex flex-col max-w-[800px] gap-10 mt-10 bg-gray-600 p-5 rounded-[20px] mb-[50px]">
-        <div className="grid grid-cols-5 gap-10 text-white text-xl border-b-black border-b pb-2">
-          {headers.map((header, index) => (
-            <p key={index}>{header}</p>
-          ))}
-        </div>
-        {tableLoading ? (
-          <div className="self-center flex items-center gap-5">
-            <CircularProgress />
-          </div>
-        ) : dates.length ? (
-          dates.map((date: any) => {
-            const rowData = [
-              date.date,
-              date.time,
-              date.userName ?? "-",
-              date.profile_picture ? (
-                <img
-                  className="rounded-full w-[80px] h-[80px]"
-                  src={date.profile_picture}
-                  alt="Profile"
-                />
-              ) : (
-                "-"
-              ),
-              <span
-                className="text-red-500 cursor-pointer flex justify-center items-center"
-                onClick={() => handleDelete(date.id)}
-              >
-                {loadingStates[date.id] ? (
-                  <CircularProgress size="30px" color="error" />
-                ) : (
-                  <HiTrash className="w-[30px] h-[25px]" />
-                )}
-              </span>,
-            ];
+      <TableContainer component={Paper} sx={{ m: 3 }} className="w-full">
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              {headers.map((header, index) => (
+                <TableCell key={index} sx={{ textAlign: "center" }}>
+                  {header}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={headers.length}
+                  sx={{ textAlign: "center" }}
+                >
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            ) : dates.length ? (
+              dates.map((date) => {
+                const rowData = [
+                  date.date ?? "-",
+                  date.time ?? "-",
+                  date.userName ?? "-",
+                  date.profile_picture ? (
+                    <Avatar
+                      src={date.profile_picture}
+                      alt="Profile"
+                      style={{
+                        borderRadius: "50%",
+                        margin: "0 auto",
+                      }}
+                      sx={{
+                        width: { xs: "40px", md: "80px" },
+                        height: { xs: "40px", md: "80px" },
+                      }}
+                    />
+                  ) : (
+                    "-"
+                  ),
+                  <IconButton
+                    onClick={() => handleDelete(date.id ?? "")}
+                    color="error"
+                  >
+                    {loadingStates[date.id ?? ""] ? (
+                      <CircularProgress size="24px" color="error" />
+                    ) : (
+                      <HiTrash />
+                    )}
+                  </IconButton>,
+                ];
 
-            return (
-              <div
-                className="grid grid-cols-5 gap-10 text-white text-xl items-center"
-                key={date.id}
-              >
-                {rowData.map((data, index) => (
-                  <p key={index}>{data}</p>
-                ))}
-              </div>
-            );
-          })
-        ) : (
-          <div className="self-center flex items-center gap-5">
-            <span className="text-white">داده ای یافت نشد</span>
-            <img className="w-[100px]" src={noDataImage} alt="No Data" />
-          </div>
-        )}
-      </div>
-    </>
+                return (
+                  <TableRow key={date.id ?? date.userName}>
+                    {rowData.map((cellData, index) => (
+                      <TableCell
+                        key={index}
+                        sx={{ textAlign: "center", padding: "8px" }}
+                      >
+                        {cellData}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={headers.length}
+                  sx={{ textAlign: "center" }}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={2}
+                  >
+                    <span>داده ای یافت نشد</span>
+                    <img
+                      src={noDataImage}
+                      alt="No Data"
+                      style={{ width: 100 }}
+                    />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

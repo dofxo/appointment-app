@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "/public/assets/fonts/iransans/iransans.scss";
+
 body {
-  font-family: 'Tahoma';
+  font-family: 'IRANSansX';
   background-color: #CDF5FD;
 }
 

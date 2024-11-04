@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ShowTimeAndDates } from "../";
 
@@ -41,8 +41,10 @@ const TimeStep = ({
 
   return (
     <div>
-      <h2>{userName} گرامی، لطفا زمان مورد نظر خودتان را انتخاب کنید</h2>
-      <div className="flex justify-center mt-20 gap-5">
+      <Typography sx={{ fontSize: { xs: "15px", sm: "17px" } }}>
+        {userName} گرامی، لطفا زمان مورد نظر خودتان را انتخاب کنید
+      </Typography>
+      <div className="flex justify-center flex-wrap mt-20 gap-5">
         {loading ? (
           <Box sx={{ width: "30%" }}>
             <LinearProgress />

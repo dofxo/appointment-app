@@ -7,6 +7,7 @@ import {
   Input,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -103,7 +104,13 @@ const Settings = ({ userId }: { userId: string | null }) => {
 
   return (
     <>
-      <h1 className="m-20 text-xl text-[#00A9FF]">تنظیمات کاربری</h1>
+      <Typography
+        variant="h6"
+        sx={{ color: "primary.main" }}
+        className="!m-[50px] text-xl"
+      >
+        تنظیمات کاربری
+      </Typography>
       {loading ? (
         <CircularProgress size={70} />
       ) : (

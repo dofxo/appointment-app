@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 import "./styles.scss";
@@ -15,7 +15,10 @@ const AdminPage = () => {
       <Typography variant="h5" sx={{ color: "primary.main" }}>
         صفحه مدیریت نوبت ها
       </Typography>
-      <div className="button-wrapper m-[40px] flex gap-2 justify-center">
+      <Box
+        sx={{ margin: { sm: "40px", xs: "20px" } }}
+        className="button-wrapper flex gap-2 justify-center"
+      >
         {navigationItmes.map((item, idx) => (
           <Button
             key={idx}
@@ -32,7 +35,7 @@ const AdminPage = () => {
             </NavLink>
           </Button>
         ))}
-      </div>
+      </Box>
       <Outlet />
     </>
   );

@@ -37,7 +37,7 @@ const DateStep = ({
     <div className="first-step">
       <h2>{userName} گرامی، لطفا تاریخ مورد نظر خودتان را انتخاب کنید</h2>
 
-      <div className="available-dates mt-20 flex gap-5 justify-center">
+      <div className="available-dates mt-20 flex-wrap flex gap-5 justify-center">
         {loading ? (
           <Box sx={{ width: "30%" }}>
             <LinearProgress />

@@ -89,7 +89,9 @@ const Header = ({
               </Tooltip>
               {username && (
                 <>
-                  <Typography>{username} عزیز٬ خوش آمدید.</Typography>
+                  <Typography sx={{ display: { xs: "none", md: "block" } }}>
+                    {username} عزیز٬ خوش آمدید.
+                  </Typography>
                   <Menu
                     sx={{ mt: "70px" }}
                     id="menu-appbar"
