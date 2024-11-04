@@ -1,8 +1,4 @@
-import {
-  DateTimePicker,
-  renderTimeViewClock,
-  StaticDateTimePicker,
-} from "@mui/x-date-pickers";
+import { renderTimeViewClock, StaticDateTimePicker } from "@mui/x-date-pickers";
 import { Card } from "@mui/material";
 import { HiOutlineClock, HiOutlineCalendar } from "react-icons/hi";
 
@@ -96,7 +92,6 @@ const ManageReserves = ({
             setButtonLoading(false);
           }
         }}
-        className="text-white rounded p-1 !font-[unset]"
       >
         تایید زمان و تاریخ
       </LoadingButton>
