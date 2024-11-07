@@ -1,33 +1,12 @@
+@use "/public/assets/fonts/iransans/iransans.scss";
+@use "/src/scss/mui";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "/public/assets/fonts/iransans/iransans.scss";
 
 body {
   font-family: 'IRANSansX';
   background-color: #CDF5FD;
-}
-
-.MuiModal-root,
-.MuiPaper-root {
-  * {
-    font-family: inherit !important;
-  }
-}
-
-.MuiDateTimePickerToolbar-timeDigitsContainer {
-  direction: ltr
-}
-
-ul.MuiList-root {
-  @apply bg-[#1976d2];
-
-  li {
-    @apply text-white transition;
-
-    &:hover {
-      @apply text-[#114a86]
-    }
-  }
 }

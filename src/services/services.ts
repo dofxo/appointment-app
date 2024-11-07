@@ -1,7 +1,7 @@
 import { supabase } from "../Supabase/initialize";
 
 export const getReserves = async () => {
-  const { data } = await supabase.from("reserves").select("*");
+  const { data } = await supabase.from("reserves").select("*").order("date");
 
   return { data };
 };

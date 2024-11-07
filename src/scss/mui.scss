@@ -1,0 +1,26 @@
+.MuiModal-root,
+.MuiPaper-root {
+  * {
+    font-family: inherit !important;
+  }
+}
+
+.MuiPickersLayout-actionBar {
+  display: none !important;
+}
+
+.MuiDateTimePickerToolbar-timeDigitsContainer {
+  direction: ltr
+}
+
+ul.MuiList-root {
+  @apply bg-[#1976d2];
+
+  li {
+    @apply text-white transition;
+
+    &:hover {
+      @apply text-[#114a86]
+    }
+  }
+}
