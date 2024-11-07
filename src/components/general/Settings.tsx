@@ -24,6 +24,7 @@ const Settings = ({ userId }: { userId: string | null }) => {
     username: string;
     password: string;
     profile_picture: string;
+    phone_number: string;
   }>();
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -44,6 +45,14 @@ const Settings = ({ userId }: { userId: string | null }) => {
       type: "text",
       label: "نام کاربری",
     },
+    {
+      value: userInfo?.phone_number || "",
+      name: "phoneNumber",
+      type: "text",
+      inputMode: "numeric",
+      label: "شماره تلفن",
+    },
+
     {
       value: userInfo?.password || "",
       name: "password",
@@ -88,7 +97,11 @@ const Settings = ({ userId }: { userId: string | null }) => {
       setButtonLoading(true);
       const { error } = await supabase
         .from("users")
-        .update({ password: values.password, username: values.username })
+        .update({
+          password: values.password,
+          username: values.username,
+          phone_number: values.phoneNumber,
+        })
         .eq("id", userId)
         .select();
 
@@ -122,9 +135,10 @@ const Settings = ({ userId }: { userId: string | null }) => {
             onSubmit={handleSubmit}
             validationSchema={authSchema}
             initialValues={{
-              username: userInfo?.username || "",
-              password: userInfo?.password || "",
-              confirmPassword: userInfo?.password || "",
+              username: userInfo?.username ?? "",
+              password: userInfo?.password ?? "",
+              confirmPassword: userInfo?.password ?? "",
+              phoneNumber: userInfo?.phone_number ?? "",
               profilePicture: "",
             }}
             enableReinitialize
@@ -147,6 +161,9 @@ const Settings = ({ userId }: { userId: string | null }) => {
                           {...field}
                           variant="standard"
                           label={inputInfo.label}
+                          inputMode={
+                            inputInfo.inputMode ? inputInfo.inputMode : "text"
+                          }
                           type={
                             inputInfo.type === "password" && !showPasswords
                               ? "password"
