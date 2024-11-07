@@ -6,7 +6,6 @@ import { supabase } from "../../Supabase/initialize";
 import {
   Box,
   CircularProgress,
-  Typography,
   Table,
   TableBody,
   TableCell,
@@ -18,20 +17,22 @@ import {
   Avatar,
 } from "@mui/material";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
+import TableToolbar from "../general/TableToolBar";
 
 const SeeReserves = ({
   dates,
   setDates,
 }: {
-  dates: any[]; // Set dates to return any type
+  dates: any[];
   setDates: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
   const headers = ["تاریخ", "زمان", "رزرو کننده", "تصویر کاربر", "عملیات"];
+  const [isAscending, setAscendingStatus] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const showReserversOnTable = async (isAscending: boolean) => {
+    try {
       setTableLoading(true);
-      const { data: reserves } = await getReserves();
+      const { data: reserves } = await getReserves(isAscending);
       const { data: users } = await getUsers();
 
       reserves?.forEach((reserve) => {
@@ -42,9 +43,16 @@ const SeeReserves = ({
       });
 
       if (reserves) setDates(reserves);
+    } catch (error) {
+      console.error(error);
+    } finally {
       setTableLoading(false);
-    })();
-  }, []);
+    }
+  };
+
+  useEffect(() => {
+    showReserversOnTable(isAscending);
+  }, [isAscending]);
 
   const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
     {},
@@ -77,14 +85,12 @@ const SeeReserves = ({
 
   return (
     <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
-      <Typography
-        sx={{ color: "primary.main" }}
-        variant="h6"
-        className="font-bold text-xl"
-      >
-        لیست رزرو ها
-      </Typography>
       <TableContainer component={Paper} sx={{ m: 3 }} className="w-full">
+        <TableToolbar
+          title="لیست رزرو ها"
+          setAscendingStatus={setAscendingStatus}
+          isAscending={isAscending}
+        />
         <Table stickyHeader>
           <TableHead>
             <TableRow>

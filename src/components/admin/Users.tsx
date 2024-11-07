@@ -6,7 +6,6 @@ import { supabase } from "../../Supabase/initialize";
 import {
   Box,
   CircularProgress,
-  Typography,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +17,7 @@ import {
   Avatar,
 } from "@mui/material";
 import moment from "jalali-moment";
+import TableToolbar from "../general/TableToolBar";
 
 const Users = () => {
   const headers = [
@@ -28,12 +28,13 @@ const Users = () => {
     "عملیات",
   ];
   const [users, setUsers] = useState<any[]>();
+  const [isAscending, setAscendingStatus] = useState(false);
 
-  useEffect(() => {
+  const showUsers = async (isAscending: boolean) => {
     (async () => {
       try {
         setTableLoading(true);
-        const { data: users, error } = await getUsers();
+        const { data: users, error } = await getUsers(isAscending);
 
         if (users) setUsers(users);
 
@@ -44,7 +45,11 @@ const Users = () => {
         setTableLoading(false);
       }
     })();
-  }, []);
+  };
+
+  useEffect(() => {
+    showUsers(isAscending);
+  }, [isAscending]);
 
   const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
     {},
@@ -68,13 +73,6 @@ const Users = () => {
 
   return (
     <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
-      <Typography
-        sx={{ color: "primary.main" }}
-        variant="h6"
-        className="font-bold text-xl"
-      >
-        لیست کاربر ها
-      </Typography>
       <TableContainer
         component={Paper}
         sx={{
@@ -82,6 +80,11 @@ const Users = () => {
         }}
         className="w-full"
       >
+        <TableToolbar
+          isAscending={isAscending}
+          setAscendingStatus={setAscendingStatus}
+          title="لیست کاربران"
+        />
         <Table stickyHeader>
           <TableHead>
             <TableRow>
