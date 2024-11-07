@@ -14,7 +14,7 @@ const ShowTimeAndDates = ({
   setForceRender,
   setShowState,
 }: {
-  date: string;
+  date: string | undefined;
   setSelectedDate?: React.Dispatch<React.SetStateAction<string>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   userName?: string;
@@ -30,7 +30,7 @@ const ShowTimeAndDates = ({
       onClick={async () => {
         try {
           // select date step
-          if (setSelectedDate) {
+          if (setSelectedDate && date) {
             setSelectedDate(date);
           }
           // select time step
