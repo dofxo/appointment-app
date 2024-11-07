@@ -22,6 +22,7 @@ import {
   Header,
   Settings,
   TitleAdder,
+  Users,
 } from "./components/";
 
 const App = () => {
@@ -111,6 +112,7 @@ const App = () => {
                     path="/admin/see"
                     element={<SeeReserves dates={dates} setDates={setDates} />}
                   />
+                  <Route path="/admin/users" element={<Users />} />
                 </Route>
                 <Route path="/user" element={<User userName={username} />} />
                 <Route

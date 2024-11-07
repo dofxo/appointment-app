@@ -7,9 +7,11 @@ export const getReserves = async () => {
 };
 
 export const getUsers = async () => {
-  const { data } = await supabase.from("users").select("*");
-
-  return { data };
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .order("created_at");
+  return { data, error };
 };
 
 export const getUser = async (userId: string) => {

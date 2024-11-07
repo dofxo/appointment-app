@@ -1,6 +1,7 @@
 export { default as Admin } from "./admin/Admin";
 export { default as ManageReserves } from "./admin/ManageReserves";
 export { default as SeeReserves } from "./admin/SeeReserves";
+export { default as Users } from "./admin/Users";
 export { default as User } from "./user/User";
 export { default as DateStep } from "./user/DateStep";
 export { default as TimeStep } from "./user/TimeStep";
