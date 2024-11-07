@@ -16,6 +16,10 @@ body {
   }
 }
 
+.MuiDateTimePickerToolbar-timeDigitsContainer {
+  direction: ltr
+}
+
 ul.MuiList-root {
   @apply bg-[#1976d2];
 

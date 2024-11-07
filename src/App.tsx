@@ -55,7 +55,7 @@ const App = () => {
             if (data.username) setUsername(data.username);
             if (data.isAdmin) setIsAdmin(true);
             setUserInfo(data);
-            navigate(data.isAdmin ? "/admin" : "/user");
+            navigate(data.isAdmin ? "/admin/see" : "/user");
           }
 
           if (error) throw error;

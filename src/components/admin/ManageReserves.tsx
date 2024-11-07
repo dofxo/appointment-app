@@ -8,38 +8,28 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Moment } from "jalali-moment";
 import moment from "jalali-moment";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Supabase/initialize";
 import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
+import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 
 const ManageReserves = ({
   setDates,
 }: {
   setDates: React.Dispatch<React.SetStateAction<reservredDatesArrayType[]>>;
 }) => {
-  const [dateValue, setDateValue] = useState<Moment | null>(null);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState<Moment | null>(null);
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  useEffect(() => {
-    const persianDateTemplate = moment(dateValue?.toDate()).locale("fa");
-
-    const date = persianDateTemplate.format(`YYYY/MM/DD`);
-    const time = persianDateTemplate.format("HH:mm");
-
-    setDate(date);
-    setTime(time);
-  }, [dateValue]);
   return (
     <div className="flex flex-col gap-5 items-center max-w-[300px] pb-[20px]">
       <LocalizationProvider dateAdapter={AdapterMomentJalaali}>
         <StaticDateTimePicker
-          onChange={(newValue) => setDateValue(newValue)}
+          onChange={(newValue) => setDate(newValue)}
           viewRenderers={{
             hours: renderTimeViewClock,
             minutes: renderTimeViewClock,
@@ -55,11 +45,18 @@ const ManageReserves = ({
         <div className="self-start mt-5">
           <p className="flex gap-2 items-center">
             <HiOutlineCalendar className="w-[20px] h-[20px]" />
-            <span>{date}</span>
+            <span>
+              {convertToPersianDate(
+                new Date(date?.toDate() ?? new Date()),
+                "date",
+              )}
+            </span>
           </p>
           <p className="flex gap-2 items-center">
             <HiOutlineClock className="w-[20px] h-[20px]" />
-            <span> {time}</span>
+            <span>
+              {convertToPersianDate(date?.toDate() ?? new Date(), "time")}
+            </span>
           </p>
         </div>
       </Card>
@@ -75,7 +72,6 @@ const ManageReserves = ({
             const { error } = await supabase.from("reserves").insert([
               {
                 date,
-                time,
                 id: uniqueIdGenerator(),
               },
             ]);

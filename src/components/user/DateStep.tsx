@@ -3,6 +3,7 @@ import { getReserves } from "../../services/services.ts";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
 import { ShowTimeAndDates } from "../";
+import { convertToPersianDate } from "../../helpers/convertToPersianDate.ts";
 
 const DateStep = ({
   userName = "کاربر",
@@ -47,7 +48,7 @@ const DateStep = ({
             {reservedDates.length ? (
               reservedDates.map((date) => (
                 <ShowTimeAndDates
-                  date={date}
+                  date={convertToPersianDate(new Date(date), "date")}
                   key={date}
                   setSelectedDate={setSelectedDate}
                   setStep={setStep}

@@ -14,6 +14,7 @@ import "./style.scss";
 import { supabase } from "../../Supabase/initialize";
 import TitleAdder from "../../HOC/TitleAdder";
 import { DateStep, TimeStep } from "../";
+import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 
 const UserPage = ({ userName }: { userName: string }) => {
   const [step, setStep] = useState(1);
@@ -102,19 +103,29 @@ const UserPage = ({ userName }: { userName: string }) => {
               >
                 اطلاعات رزرو
               </Typography>
-              <Typography variant="body2">
+              <div className="wrapper">
                 <div className="flex flex-col gap-5">
                   <div className="flex justify-between">
                     <span>تاریخ:</span>
-                    <span>{reserveInfo?.date || ""}</span>
+                    <span>
+                      {convertToPersianDate(
+                        new Date(reserveInfo?.date) ?? "",
+                        "date",
+                      )}
+                    </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span>زمان:</span>
-                    <span>{reserveInfo?.time || ""}</span>
+                    <span>
+                      {convertToPersianDate(
+                        new Date(reserveInfo?.date) ?? "",
+                        "time",
+                      )}
+                    </span>
                   </div>
                 </div>
-              </Typography>
+              </div>
             </CardContent>
             <CardActions className="flex justify-center">
               <LoadingButton

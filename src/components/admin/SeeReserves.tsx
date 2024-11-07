@@ -17,6 +17,7 @@ import {
   IconButton,
   Avatar,
 } from "@mui/material";
+import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 
 const SeeReserves = ({
   dates,
@@ -107,8 +108,8 @@ const SeeReserves = ({
             ) : dates.length ? (
               dates.map((date) => {
                 const rowData = [
-                  date.date ?? "-",
-                  date.time ?? "-",
+                  convertToPersianDate(date.date ?? "-", "date"),
+                  convertToPersianDate(date.date ?? "-", "time"),
                   date.userName ?? "-",
                   date.profile_picture ? (
                     <Avatar

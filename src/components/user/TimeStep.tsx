@@ -4,6 +4,7 @@ import { getReserves } from "../../services/services";
 import { Box, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ShowTimeAndDates } from "../";
+import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 
 const TimeStep = ({
   userName = "کاربر",
@@ -30,7 +31,9 @@ const TimeStep = ({
       const { data: reserves } = await getReserves();
 
       const filteredReservers: reservredDatesArrayType | any = reserves?.filter(
-        (date: any) => date.date === selectedDate && !date.userName,
+        (date: any) =>
+          convertToPersianDate(date.date, "date") === selectedDate &&
+          !date.userName,
       );
 
       if (filteredReservers) setReservedTime(filteredReservers);
@@ -52,7 +55,7 @@ const TimeStep = ({
         ) : (
           reservedTimes?.map((date) => (
             <ShowTimeAndDates
-              date={date.time}
+              date={convertToPersianDate(new Date(date.date), "time")}
               key={date.id}
               dateId={date.id}
               setStep={setStep}
