@@ -26,7 +26,14 @@ const SeeReserves = ({
   dates: any[];
   setDates: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
-  const headers = ["تاریخ", "زمان", "رزرو کننده", "تصویر کاربر", "عملیات"];
+  const headers = [
+    "تاریخ",
+    "زمان",
+    "رزرو کننده",
+    "شماره تلفن",
+    "تصویر کاربر",
+    "عملیات",
+  ];
   const [isAscending, setAscendingStatus] = useState(false);
 
   const showReserversOnTable = async (isAscending: boolean) => {
@@ -37,8 +44,10 @@ const SeeReserves = ({
 
       reserves?.forEach((reserve) => {
         const user = users?.find((user) => user.username === reserve.userName);
+
         if (user) {
           reserve.profile_picture = user.profile_picture;
+          reserve.phone_number = user.phone_number;
         }
       });
 
@@ -117,6 +126,7 @@ const SeeReserves = ({
                   convertToPersianDate(date.date ?? "-", "date"),
                   convertToPersianDate(date.date ?? "-", "time"),
                   date.userName ?? "-",
+                  date.phone_number ?? "-",
                   date.profile_picture ? (
                     <Avatar
                       src={date.profile_picture}

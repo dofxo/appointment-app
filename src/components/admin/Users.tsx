@@ -21,9 +21,10 @@ import TableToolbar from "../general/TableToolBar";
 
 const Users = () => {
   const headers = [
-    "آیدی",
+    "شناسه",
     "تاریخ ساخت اکانت",
     "نام کاربری",
+    "شماره تلفن",
     "عکس کاربر",
     "عملیات",
   ];
@@ -113,6 +114,7 @@ const Users = () => {
                     .locale("fa")
                     .format("YYYY/MM/DD") ?? "-",
                   date.username ?? "-",
+                  date.phone_number ?? "-",
                   date.profile_picture ? (
                     <Avatar
                       src={date.profile_picture}

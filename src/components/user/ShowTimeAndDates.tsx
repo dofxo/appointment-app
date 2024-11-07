@@ -13,6 +13,7 @@ const ShowTimeAndDates = ({
   dateId,
   setForceRender,
   setShowState,
+  setPhoneNumberModalStatus,
 }: {
   date: string | undefined;
   setSelectedDate?: React.Dispatch<React.SetStateAction<string>>;
@@ -22,8 +23,36 @@ const ShowTimeAndDates = ({
   dateId?: string;
   setForceRender?: React.Dispatch<React.SetStateAction<boolean>>;
   setShowState?: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
+  setPhoneNumberModalStatus?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [loading, setLoading] = useState(false);
+
+  const updateUserInfo = async () => {
+    const { error } = await supabase
+      .from("reserves")
+      .update({ userName })
+      .eq("id", dateId)
+      .select();
+
+    const { error: error2 } = await supabase
+      .from("users")
+      .update({ reserve: dateId })
+      .eq("username", userName)
+      .select();
+
+    if (error) throw error;
+    if (error2) throw error2;
+
+    if (setForceRender) setForceRender((prev) => !prev);
+    if (setShowState) setShowState("reserves");
+
+    toast.success(
+      `نوبت شما در تاریخ ${selectedDate}, ${date} با موفقیت ثبت شد`,
+      {
+        duration: 4000,
+      },
+    );
+  };
   return (
     <Card
       variant="outlined"
@@ -36,30 +65,23 @@ const ShowTimeAndDates = ({
           // select time step
           else {
             setLoading(true);
-            const { error } = await supabase
-              .from("reserves")
-              .update({ userName })
-              .eq("id", dateId)
-              .select();
 
-            const { error: error2 } = await supabase
+            const { error, data: user } = await supabase
               .from("users")
-              .update({ reserve: dateId })
+              .select("*")
               .eq("username", userName)
-              .select();
+              .single();
 
             if (error) throw error;
-            if (error2) throw error2;
 
-            if (setForceRender) setForceRender((prev) => !prev);
-            if (setShowState) setShowState("reserves");
-
-            toast.success(
-              `نوبت شما در تاریخ ${selectedDate}, ${date} با موفقیت ثبت شد`,
-              {
-                duration: 4000,
-              },
-            );
+            if (user.phone_number) {
+              updateUserInfo();
+            } else {
+              if (setPhoneNumberModalStatus) {
+                setPhoneNumberModalStatus(true);
+                return;
+              }
+            }
           }
 
           setStep((prev) => {

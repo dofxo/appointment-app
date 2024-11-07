@@ -9,21 +9,7 @@ import { authSchema } from "../../schemas/authSchema";
 import { FormValues, InputInfo, inputTypes } from "../../types/types";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { handleSubmit } from "../../helpers/handleAuthSubmit";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "10px",
-  display: "flex",
-  flexDirection: "column",
-  gap: "15px",
-};
+import { style } from "../../constants/modalStyle";
 
 const AuthModal = ({
   setOpenModal,
@@ -40,6 +26,7 @@ const AuthModal = ({
   const usernameRef = useRef<inputTypes>();
   const passwordRef = useRef<inputTypes>();
   const confirmPasswordRef = useRef<inputTypes>();
+  const phoneNumberRef = useRef<inputTypes>();
 
   const inputs: InputInfo[] = [
     {
@@ -47,6 +34,15 @@ const AuthModal = ({
       name: "username",
       ref: usernameRef,
     },
+    {
+      label: "شماره تلفن",
+      name: "phoneNumber",
+      type: "text",
+      ref: phoneNumberRef,
+      hide: isLogin,
+      inputMode: "numeric",
+    },
+
     {
       label: "رمز عبور",
       name: "password",
@@ -91,7 +87,12 @@ const AuthModal = ({
             });
           }}
           validationSchema={authSchema(isLogin)}
-          initialValues={{ password: "", confirmPassword: "", username: "" }}
+          initialValues={{
+            password: "",
+            confirmPassword: "",
+            username: "",
+            phoneNumber: "",
+          }}
         >
           {({
             errors,
@@ -113,6 +114,9 @@ const AuthModal = ({
                           variant="standard"
                           label={inputInfo.label}
                           type={inputInfo.type || "text"}
+                          inputMode={
+                            inputInfo.inputMode ? inputInfo.inputMode : "text"
+                          }
                           helperText={
                             touched[inputInfo.name] && errors[inputInfo.name]
                           }

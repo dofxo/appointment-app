@@ -3,6 +3,7 @@ import { FormValues } from "../types/types";
 import toast from "react-hot-toast";
 import uniqueIdGenerator from "./uniqueIdGenerator";
 import setToken from "./setToken";
+import { convertPersianToEnglishNumbers } from "./convertPersianToEnglishNubmers";
 
 export const handleSubmit = async ({
   values,
@@ -42,6 +43,9 @@ export const handleSubmit = async ({
           {
             username: values.username,
             password: values.password,
+            ["phone_number"]: convertPersianToEnglishNumbers(
+              values.phoneNumber,
+            ),
             id: userId,
           },
         ]);

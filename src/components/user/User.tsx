@@ -15,6 +15,7 @@ import { supabase } from "../../Supabase/initialize";
 import TitleAdder from "../../HOC/TitleAdder";
 import { DateStep, TimeStep } from "../";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
+import PhoneNumberAddModal from "./PhoneNumberAddModal";
 
 const UserPage = ({ userName }: { userName: string }) => {
   const [step, setStep] = useState(1);
@@ -22,6 +23,7 @@ const UserPage = ({ userName }: { userName: string }) => {
   const submitButtonRef = useRef<null | HTMLButtonElement>(null);
   const [showState, setShowState] = useState<"reserves" | "new">("reserves");
   const [loading, setLoading] = useState(false);
+  const [phoneNumberModalStatus, setPhoneNumberModalStatus] = useState(false);
   const [reserveInfo, setReserveInfo] = useState<null | {
     id: string;
     created_at: string;
@@ -181,6 +183,7 @@ const UserPage = ({ userName }: { userName: string }) => {
               setStep={setStep}
               setForceRender={setForceRender}
               setShowState={setShowState}
+              setPhoneNumberModalStatus={setPhoneNumberModalStatus}
             />
           )}
 
@@ -208,6 +211,12 @@ const UserPage = ({ userName }: { userName: string }) => {
             >
               <HiChevronLeft />
             </Button>
+
+            <PhoneNumberAddModal
+              phoneNumberModalStatus={phoneNumberModalStatus}
+              setPhoneNumberModalStatus={setPhoneNumberModalStatus}
+              userName={userName}
+            />
           </div>
         </>
       )}
