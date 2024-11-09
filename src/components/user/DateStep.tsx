@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getReserves } from "../../services/services.ts";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
 import { ShowTimeAndDates } from "../";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate.ts";
+import { MainContext } from "../../context/mainContext.ts";
 
 const DateStep = ({
-  userName = "کاربر",
   setSelectedDate,
   setStep,
 }: {
-  userName: string;
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
+  const { username: userName } = useContext(MainContext);
+
   const [reservedDates, setReservedDate] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 

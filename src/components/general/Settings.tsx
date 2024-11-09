@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { supabase } from "../../Supabase/initialize";
 import {
   Avatar,
@@ -18,8 +18,11 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import toast from "react-hot-toast";
 import readURL from "../../helpers/readUrl";
 import uploadProfilePicture from "../../helpers/uploadProfilePicture";
+import { MainContext } from "../../context/mainContext";
 
-const Settings = ({ userId }: { userId: string | null }) => {
+const Settings = () => {
+  const { userId } = useContext(MainContext);
+
   const [userInfo, setUserInfo] = useState<{
     username: string;
     password: string;

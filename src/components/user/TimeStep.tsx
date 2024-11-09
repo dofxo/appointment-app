@@ -1,20 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
 import { Box, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ShowTimeAndDates } from "../";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
+import { MainContext } from "../../context/mainContext";
 
 const TimeStep = ({
-  userName = "کاربر",
   selectedDate,
   setStep,
   setForceRender,
   setShowState,
   setPhoneNumberModalStatus,
 }: {
-  userName: string;
   selectedDate: string;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setForceRender: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,6 +23,8 @@ const TimeStep = ({
   const [reservedTimes, setReservedTime] = useState<reservredDatesArrayType>(
     [],
   );
+
+  const { username: userName } = useContext(MainContext);
 
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +63,6 @@ const TimeStep = ({
               dateId={date.id}
               setStep={setStep}
               selectedDate={selectedDate}
-              userName={userName}
               setForceRender={setForceRender}
               setShowState={setShowState}
               setPhoneNumberModalStatus={setPhoneNumberModalStatus}

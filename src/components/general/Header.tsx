@@ -10,29 +10,23 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import setToken from "../../helpers/setToken";
+import { MainContext } from "../../context/mainContext";
 
-const Header = ({
-  username,
-  userId,
-  setOpenModal,
-  isAdmin,
-  setUserId,
-  setUsername,
-  setIsAdmin,
-  userInfo,
-}: {
-  username: string;
-  userId: string | null;
-  isAdmin: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
-  setUsername: React.Dispatch<React.SetStateAction<string>>;
-  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  userInfo: any;
-}) => {
+const Header = () => {
+  const {
+    isAdmin,
+    userInfo,
+    username,
+    setUsername,
+    setIsAdmin,
+    setUserId,
+    setOpenModal,
+    userId,
+  } = useContext(MainContext);
+
   const [inSettings, setInsettings] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [userProfile, setUserProfile] = useState("");

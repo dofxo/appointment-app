@@ -4,22 +4,23 @@ import { Field, Formik, FormikErrors, FormikTouched, Form } from "formik";
 import { phoneNumberSchema } from "../../schemas/phoneNumber";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { supabase } from "../../Supabase/initialize";
 import toast from "react-hot-toast";
 import { convertPersianToEnglishNumbers } from "../../helpers/convertPersianToEnglishNubmers";
+import { MainContext } from "../../context/mainContext";
 
 type formValue = { phoneNumber: string };
 
 const PhoneNumberAddModal = ({
   phoneNumberModalStatus,
   setPhoneNumberModalStatus,
-  userName,
 }: {
-  userName: string;
   phoneNumberModalStatus: boolean;
   setPhoneNumberModalStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { username: userName } = useContext(MainContext);
+
   const [isLoading, setIsLoading] = useState(false);
 
   return (

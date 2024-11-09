@@ -4,6 +4,7 @@ export type reserveDateType = {
   time: string;
   profile_picture: string;
   userName: string;
+  phone_number: string;
 };
 
 export type reservredDatesArrayType = reserveDateType[];

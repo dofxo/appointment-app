@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { TextField, Button } from "@mui/material";
 import { Formik, Form, Field, FormikErrors, FormikTouched } from "formik";
@@ -10,16 +10,11 @@ import { FormValues, InputInfo, inputTypes } from "../../types/types";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { handleSubmit } from "../../helpers/handleAuthSubmit";
 import { style } from "../../constants/modalStyle";
+import { MainContext } from "../../context/mainContext";
 
-const AuthModal = ({
-  setOpenModal,
-  openModal,
-  setUserId,
-}: {
-  openModal: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
-}) => {
+const AuthModal = () => {
+  const { setOpenModal, openModal, setUserId } = useContext(MainContext);
+
   const [isLogin, setStatus] = useState(false);
   const [isLoading, setLoading] = useState(false);
 

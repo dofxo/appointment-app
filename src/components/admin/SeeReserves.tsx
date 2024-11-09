@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import noDataImage from "../../assets/no-data.png";
 import { getReserves, getUsers } from "../../services/services";
@@ -18,14 +18,10 @@ import {
 } from "@mui/material";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import TableToolbar from "../general/TableToolBar";
+import { MainContext } from "../../context/mainContext";
 
-const SeeReserves = ({
-  dates,
-  setDates,
-}: {
-  dates: any[];
-  setDates: React.Dispatch<React.SetStateAction<any[]>>;
-}) => {
+const SeeReserves = () => {
+  const { dates, setDates } = useContext(MainContext);
   const headers = [
     "تاریخ",
     "زمان",
@@ -123,8 +119,8 @@ const SeeReserves = ({
             ) : dates.length ? (
               dates.map((date) => {
                 const rowData = [
-                  convertToPersianDate(date.date ?? "-", "date"),
-                  convertToPersianDate(date.date ?? "-", "time"),
+                  convertToPersianDate(new Date(date.date) ?? "-", "date"),
+                  convertToPersianDate(new Date(date.date) ?? "-", "time"),
                   date.userName ?? "-",
                   date.phone_number ?? "-",
                   date.profile_picture ? (

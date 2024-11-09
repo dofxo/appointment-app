@@ -1,14 +1,14 @@
 import { Card } from "@mui/material";
 import { supabase } from "../../Supabase/initialize";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { MainContext } from "../../context/mainContext";
 
 const ShowTimeAndDates = ({
   date,
   setSelectedDate,
   setStep,
-  userName,
   selectedDate,
   dateId,
   setForceRender,
@@ -18,13 +18,14 @@ const ShowTimeAndDates = ({
   date: string | undefined;
   setSelectedDate?: React.Dispatch<React.SetStateAction<string>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  userName?: string;
   selectedDate?: string;
   dateId?: string;
   setForceRender?: React.Dispatch<React.SetStateAction<boolean>>;
   setShowState?: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
   setPhoneNumberModalStatus?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { username: userName } = useContext(MainContext);
+
   const [loading, setLoading] = useState(false);
 
   const updateUserInfo = async () => {

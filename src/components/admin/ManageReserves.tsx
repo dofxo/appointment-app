@@ -8,19 +8,17 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Moment } from "jalali-moment";
 import moment from "jalali-moment";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Supabase/initialize";
 import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
-import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
+import { MainContext } from "../../context/mainContext";
 
-const ManageReserves = ({
-  setDates,
-}: {
-  setDates: React.Dispatch<React.SetStateAction<reservredDatesArrayType[]>>;
-}) => {
+const ManageReserves = () => {
+  const { setDates } = useContext(MainContext);
+
   const [date, setDate] = useState<Moment | null>(null);
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);

@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 // helpers
 import { getUser } from "./services/services";
 import { reservredDatesArrayType } from "./types/types";
-import { AdminContext } from "./context/appointmentContent";
+import { MainContext } from "./context/mainContext";
 
 // components
 import CircularProgress from "@mui/material/CircularProgress";
@@ -27,12 +27,12 @@ import {
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
-  const [dates, setDates] = useState<reservredDatesArrayType[]>([]);
+  const [dates, setDates] = useState<reservredDatesArrayType>([]);
   const [openModal, setOpenModal] = useState(false);
   const [userId, setUserId] = useState<null | string>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const location = useLocation();
@@ -78,47 +78,41 @@ const App = () => {
   }, [isAdmin]);
 
   return (
-    <AdminContext.Provider value={{ setShowAdmin, showAdmin }}>
+    <MainContext.Provider
+      value={{
+        setShowAdmin,
+        showAdmin,
+        isAdmin,
+        username,
+        userId,
+        setOpenModal,
+        setUserId,
+        userInfo,
+        setIsAdmin,
+        setUsername,
+        setDates,
+        dates,
+        openModal,
+      }}
+    >
       {!isLoading ? (
         <>
           <Toaster />
           <center className="max-w-[1200px] m-[auto] mt-[20px] pt-[75px]">
-            <Header
-              username={username}
-              userId={userId}
-              setUserId={setUserId}
-              setOpenModal={setOpenModal}
-              isAdmin={isAdmin}
-              setIsAdmin={setIsAdmin}
-              setUsername={setUsername}
-              userInfo={userInfo}
-            />
+            <Header />
 
-            <AuthModal
-              openModal={openModal}
-              setOpenModal={setOpenModal}
-              setUserId={setUserId}
-            />
+            <AuthModal />
 
             <div className="mt-[100px]">
               <Routes>
                 <Route path="/authPrompt" element={<AuthPrompt />} />
                 <Route path="/admin" element={<Admin />}>
-                  <Route
-                    path="/admin/create"
-                    element={<ManageReserves setDates={setDates} />}
-                  />
-                  <Route
-                    path="/admin/see"
-                    element={<SeeReserves dates={dates} setDates={setDates} />}
-                  />
+                  <Route path="/admin/create" element={<ManageReserves />} />
+                  <Route path="/admin/see" element={<SeeReserves />} />
                   <Route path="/admin/users" element={<Users />} />
                 </Route>
-                <Route path="/user" element={<User userName={username} />} />
-                <Route
-                  path="/settings"
-                  element={<Settings userId={userId} />}
-                />
+                <Route path="/user" element={<User />} />
+                <Route path="/settings" element={<Settings />} />
               </Routes>
             </div>
           </center>
@@ -128,7 +122,7 @@ const App = () => {
           <CircularProgress size={150} />
         </div>
       )}
-    </AdminContext.Provider>
+    </MainContext.Provider>
   );
 };
 

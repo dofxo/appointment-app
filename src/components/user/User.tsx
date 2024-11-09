@@ -17,7 +17,7 @@ import { DateStep, TimeStep } from "../";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import PhoneNumberAddModal from "./PhoneNumberAddModal";
 
-const UserPage = ({ userName }: { userName: string }) => {
+const UserPage = () => {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const submitButtonRef = useRef<null | HTMLButtonElement>(null);
@@ -170,15 +170,10 @@ const UserPage = ({ userName }: { userName: string }) => {
       ) : (
         <>
           {step === 1 && (
-            <DateStep
-              userName={userName}
-              setSelectedDate={setSelectedDate}
-              setStep={setStep}
-            />
+            <DateStep setSelectedDate={setSelectedDate} setStep={setStep} />
           )}
           {step === 2 && (
             <TimeStep
-              userName={userName}
               selectedDate={selectedDate}
               setStep={setStep}
               setForceRender={setForceRender}
@@ -215,7 +210,6 @@ const UserPage = ({ userName }: { userName: string }) => {
             <PhoneNumberAddModal
               phoneNumberModalStatus={phoneNumberModalStatus}
               setPhoneNumberModalStatus={setPhoneNumberModalStatus}
-              userName={userName}
             />
           </div>
         </>
