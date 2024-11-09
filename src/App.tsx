@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
+import { useImmer } from "use-immer";
 
 // helpers
 import { getUser } from "./services/services";
@@ -27,7 +28,7 @@ import {
 
 const App = () => {
   const [showAdmin, setShowAdmin] = useState(false);
-  const [dates, setDates] = useState<reservredDatesArrayType>([]);
+  const [dates, setDates] = useImmer<reservredDatesArrayType>([]);
   const [openModal, setOpenModal] = useState(false);
   const [userId, setUserId] = useState<null | string>(null);
   const [isAdmin, setIsAdmin] = useState(false);

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import noDataImage from "../../assets/no-data.png";
 import { getReserves, getUsers } from "../../services/services";
@@ -19,6 +19,7 @@ import {
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import TableToolbar from "../general/TableToolBar";
 import { MainContext } from "../../context/mainContext";
+import { useSearchParams } from "react-router-dom";
 
 const SeeReserves = () => {
   const { dates, setDates } = useContext(MainContext);
@@ -31,6 +32,11 @@ const SeeReserves = () => {
     "عملیات",
   ];
   const [isAscending, setAscendingStatus] = useState(false);
+  const [query, setQuery] = useSearchParams();
+  const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
+    {},
+  );
+  const [tableLoading, setTableLoading] = useState(false);
 
   const showReserversOnTable = async (isAscending: boolean) => {
     try {
@@ -40,7 +46,6 @@ const SeeReserves = () => {
 
       reserves?.forEach((reserve) => {
         const user = users?.find((user) => user.username === reserve.userName);
-
         if (user) {
           reserve.profile_picture = user.profile_picture;
           reserve.phone_number = user.phone_number;
@@ -59,10 +64,12 @@ const SeeReserves = () => {
     showReserversOnTable(isAscending);
   }, [isAscending]);
 
-  const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
-    {},
-  );
-  const [tableLoading, setTableLoading] = useState(false);
+  const filteredDates = useMemo(() => {
+    const queryResult = query.get("query");
+    return queryResult
+      ? dates.filter((date) => date.userName?.includes(queryResult))
+      : dates;
+  }, [query, dates]);
 
   const handleDelete = async (id: string) => {
     setLoadingStates((prev) => ({ ...prev, [id]: true }));
@@ -95,6 +102,7 @@ const SeeReserves = () => {
           title="لیست رزرو ها"
           setAscendingStatus={setAscendingStatus}
           isAscending={isAscending}
+          setQuery={setQuery}
         />
         <Table stickyHeader>
           <TableHead>
@@ -116,8 +124,8 @@ const SeeReserves = () => {
                   <CircularProgress />
                 </TableCell>
               </TableRow>
-            ) : dates.length ? (
-              dates.map((date) => {
+            ) : filteredDates.length ? (
+              filteredDates.map((date) => {
                 const rowData = [
                   convertToPersianDate(new Date(date.date) ?? "-", "date"),
                   convertToPersianDate(new Date(date.date) ?? "-", "time"),
@@ -127,10 +135,7 @@ const SeeReserves = () => {
                     <Avatar
                       src={date.profile_picture}
                       alt="Profile"
-                      style={{
-                        borderRadius: "50%",
-                        margin: "0 auto",
-                      }}
+                      style={{ borderRadius: "50%", margin: "0 auto" }}
                       sx={{
                         width: { xs: "40px", md: "80px" },
                         height: { xs: "40px", md: "80px" },
