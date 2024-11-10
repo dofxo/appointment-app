@@ -7,8 +7,8 @@ import TitleAdder from "../../HOC/TitleAdder";
 
 const AdminPage = () => {
   const navigationItmes = [
-    { path: "/admin/users", text: "کاربران" },
     { path: "/admin/create", text: "اضافه کردن نوبت جدید" },
+    { path: "/admin/users", text: "کاربران" },
     { path: "/admin/see", text: "نمایش نوبت ها" },
   ];
   return (

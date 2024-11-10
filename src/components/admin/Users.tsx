@@ -6,22 +6,25 @@ import { supabase } from "../../Supabase/initialize";
 import {
   Box,
   CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   IconButton,
   Avatar,
+  Paper,
 } from "@mui/material";
 import moment from "jalali-moment";
 import TableToolbar from "../general/TableToolBar";
 import { useSearchParams } from "react-router-dom";
+import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+
+type User = {
+  id: string;
+  created_at: string;
+  username: string;
+  phone_number: string;
+  profile_picture: string;
+};
 
 const Users = () => {
-  const [users, setUsers] = useState<any[]>();
+  const [users, setUsers] = useState<User[]>([]);
   const [isAscending, setAscendingStatus] = useState(false);
   const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
     {},
@@ -34,37 +37,23 @@ const Users = () => {
   }, [isAscending]);
 
   const showUsers = async (isAscending: boolean) => {
-    (async () => {
-      try {
-        setTableLoading(true);
-        const { data: users, error } = await getUsers(isAscending);
-
-        if (users) setUsers(users);
-
-        if (error) throw error;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setTableLoading(false);
-      }
-    })();
+    setTableLoading(true);
+    try {
+      const { data: users, error } = await getUsers(isAscending);
+      if (users) setUsers(users);
+      if (error) throw error;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTableLoading(false);
+    }
   };
-
-  const headers = [
-    "شناسه",
-    "تاریخ ساخت اکانت",
-    "نام کاربری",
-    "شماره تلفن",
-    "عکس کاربر",
-    "عملیات",
-  ];
 
   const handleDelete = async (id: string) => {
     setLoadingStates((prev) => ({ ...prev, [id]: true }));
     try {
       const { error } = await supabase.from("users").delete().eq("id", id);
       if (error) throw error;
-
       const { data: users } = await getUsers();
       if (users) setUsers(users);
     } catch (error) {
@@ -74,123 +63,143 @@ const Users = () => {
     }
   };
 
-  const filteredUsers = useMemo(() => {
+  const filteredUsers: GridRowsProp = useMemo(() => {
     const queryResult = query.get("query");
     return queryResult
-      ? users?.filter((user) => user.username?.includes(queryResult))
+      ? users.filter((user) => user.username?.includes(queryResult))
       : users;
   }, [query, users]);
 
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "شناسه",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: "center",
+    },
+    {
+      field: "created_at",
+      headerName: "تاریخ ساخت اکانت",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      valueGetter: (params: any) => {
+        const date = params.value;
+        if (!date) return "-";
+        try {
+          return (
+            moment(date, "YYYY/MM/DD").locale("fa").format("YYYY/MM/DD") ?? "-"
+          );
+        } catch (error) {
+          return "-";
+        }
+      },
+      align: "center",
+    },
+    {
+      field: "username",
+      headerName: "نام کاربری",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: "center",
+    },
+    {
+      field: "phone_number",
+      headerName: "شماره تلفن",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: "center",
+    },
+    {
+      field: "profile_picture",
+      headerName: "عکس کاربر",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: "center",
+      renderCell: (params) =>
+        params.value ? (
+          <Avatar
+            src={params.value}
+            alt="Profile"
+            sx={{ width: 40, height: 40, margin: "0 auto" }}
+          />
+        ) : (
+          "-"
+        ),
+    },
+    {
+      field: "actions",
+      headerName: "عملیات",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: "center",
+      renderCell: (params) => (
+        <IconButton onClick={() => handleDelete(params.row.id)} color="error">
+          {loadingStates[params.row.id] ? (
+            <CircularProgress size="24px" color="error" />
+          ) : (
+            <HiTrash />
+          )}
+        </IconButton>
+      ),
+    },
+  ];
+
   return (
     <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
-      <TableContainer
-        component={Paper}
-        sx={{
-          m: 3,
-        }}
-        className="w-full"
-      >
+      <Paper sx={{ m: 3, width: "100%", height: 600 }}>
         <TableToolbar
           isAscending={isAscending}
           setAscendingStatus={setAscendingStatus}
           title="لیست کاربران"
           setQuery={setQuery}
         />
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {headers.map((header, index) => (
-                <TableCell key={index} sx={{ textAlign: "center" }}>
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={headers.length}
-                  sx={{ textAlign: "center" }}
-                >
-                  <CircularProgress />
-                </TableCell>
-              </TableRow>
-            ) : filteredUsers?.length ? (
-              filteredUsers.map((date) => {
-                const rowData = [
-                  date.id ?? "-",
-                  moment(date.created_at ?? "", "YYYY/MM/DD")
-                    .locale("fa")
-                    .format("YYYY/MM/DD") ?? "-",
-                  date.username ?? "-",
-                  date.phone_number ?? "-",
-                  date.profile_picture ? (
-                    <Avatar
-                      src={date.profile_picture}
-                      alt="Profile"
-                      style={{
-                        borderRadius: "50%",
-                        margin: "0 auto",
-                      }}
-                      sx={{
-                        width: { xs: "40px", md: "80px" },
-                        height: { xs: "40px", md: "80px" },
-                      }}
-                    />
-                  ) : (
-                    "-"
-                  ),
-                  <IconButton
-                    onClick={() => handleDelete(date.id ?? "")}
-                    color="error"
-                  >
-                    {loadingStates[date.id ?? ""] ? (
-                      <CircularProgress size="24px" color="error" />
-                    ) : (
-                      <HiTrash />
-                    )}
-                  </IconButton>,
-                ];
-
-                return (
-                  <TableRow key={date.id ?? date.userName}>
-                    {rowData.map((cellData, index) => (
-                      <TableCell
-                        key={index}
-                        sx={{ textAlign: "center", padding: "8px" }}
-                      >
-                        {cellData}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={headers.length}
-                  sx={{ textAlign: "center" }}
-                >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                  >
-                    <span>داده ای یافت نشد</span>
-                    <img
-                      src={noDataImage}
-                      alt="No Data"
-                      style={{ width: 100 }}
-                    />
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        {tableLoading ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height="100%"
+          >
+            <CircularProgress />
+          </Box>
+        ) : filteredUsers?.length ? (
+          <DataGrid
+            rows={filteredUsers}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 20, 50]}
+            disableRowSelectionOnClick
+            disableColumnMenu
+            disableColumnResize
+            getRowId={(row) => row.id}
+            loading={tableLoading}
+            className="centered-header"
+          />
+        ) : (
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100%"
+            gap={2}
+          >
+            <span>داده ای یافت نشد</span>
+            <img src={noDataImage} alt="No Data" style={{ width: 100 }} />
+          </Box>
+        )}
+      </Paper>
     </div>
   );
 };

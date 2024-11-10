@@ -1,36 +1,22 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { HiTrash } from "react-icons/hi";
-import noDataImage from "../../assets/no-data.png";
 import { getReserves, getUsers } from "../../services/services";
 import { supabase } from "../../Supabase/initialize";
 import {
   Box,
   CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   IconButton,
   Avatar,
+  Paper,
 } from "@mui/material";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import TableToolbar from "../general/TableToolBar";
 import { MainContext } from "../../context/mainContext";
 import { useSearchParams } from "react-router-dom";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const SeeReserves = () => {
   const { dates, setDates } = useContext(MainContext);
-  const headers = [
-    "تاریخ",
-    "زمان",
-    "رزرو کننده",
-    "شماره تلفن",
-    "تصویر کاربر",
-    "عملیات",
-  ];
   const [isAscending, setAscendingStatus] = useState(false);
   const [query, setQuery] = useSearchParams();
   const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
@@ -39,8 +25,8 @@ const SeeReserves = () => {
   const [tableLoading, setTableLoading] = useState(false);
 
   const showReserversOnTable = async (isAscending: boolean) => {
+    setTableLoading(true);
     try {
-      setTableLoading(true);
       const { data: reserves } = await getReserves(isAscending);
       const { data: users } = await getUsers();
 
@@ -95,105 +81,125 @@ const SeeReserves = () => {
     }
   };
 
+  const columns: GridColDef[] = [
+    {
+      field: "date",
+      headerName: "تاریخ",
+      flex: 1,
+      valueGetter: (params) => {
+        const dateValue = params;
+
+        return dateValue ? convertToPersianDate(new Date(params), "date") : "-";
+      },
+      align: "center",
+      sortable: false,
+      filterable: false,
+    },
+
+    {
+      field: "time",
+      headerName: "زمان",
+      flex: 1,
+      renderCell: (params) => {
+        const timeValue = params.row.date;
+        return timeValue
+          ? convertToPersianDate(new Date(timeValue), "time")
+          : "-";
+      },
+      align: "center",
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: "userName",
+      headerName: "رزرو کننده",
+      flex: 1,
+      align: "center",
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: "phone_number",
+      headerName: "شماره تلفن",
+      flex: 1,
+      align: "center",
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: "profile_picture",
+      headerName: "تصویر کاربر",
+      flex: 1,
+      renderCell: (params) =>
+        params.value ? (
+          <Avatar
+            src={params.value}
+            alt="Profile"
+            sx={{ width: 40, height: 40, margin: "0 auto" }}
+          />
+        ) : (
+          "-"
+        ),
+      align: "center",
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: "actions",
+      headerName: "عملیات",
+      flex: 1,
+      renderCell: (params) => (
+        <IconButton onClick={() => handleDelete(params.row.id)} color="error">
+          {loadingStates[params.row.id] ? (
+            <CircularProgress size="24px" color="error" />
+          ) : (
+            <HiTrash />
+          )}
+        </IconButton>
+      ),
+      align: "center",
+      sortable: false,
+      filterable: false,
+    },
+  ];
+
   return (
     <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
-      <TableContainer component={Paper} sx={{ m: 3 }} className="w-full">
+      <Paper sx={{ m: 3, width: "100%", height: 600 }}>
         <TableToolbar
           title="لیست رزرو ها"
           setAscendingStatus={setAscendingStatus}
           isAscending={isAscending}
           setQuery={setQuery}
         />
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {headers.map((header, index) => (
-                <TableCell key={index} sx={{ textAlign: "center" }}>
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={headers.length}
-                  sx={{ textAlign: "center" }}
-                >
-                  <CircularProgress />
-                </TableCell>
-              </TableRow>
-            ) : filteredDates.length ? (
-              filteredDates.map((date) => {
-                const rowData = [
-                  convertToPersianDate(new Date(date.date) ?? "-", "date"),
-                  convertToPersianDate(new Date(date.date) ?? "-", "time"),
-                  date.userName ?? "-",
-                  date.phone_number ?? "-",
-                  date.profile_picture ? (
-                    <Avatar
-                      src={date.profile_picture}
-                      alt="Profile"
-                      style={{ borderRadius: "50%", margin: "0 auto" }}
-                      sx={{
-                        width: { xs: "40px", md: "80px" },
-                        height: { xs: "40px", md: "80px" },
-                      }}
-                    />
-                  ) : (
-                    "-"
-                  ),
-                  <IconButton
-                    onClick={() => handleDelete(date.id ?? "")}
-                    color="error"
-                  >
-                    {loadingStates[date.id ?? ""] ? (
-                      <CircularProgress size="24px" color="error" />
-                    ) : (
-                      <HiTrash />
-                    )}
-                  </IconButton>,
-                ];
-
-                return (
-                  <TableRow key={date.id ?? date.userName}>
-                    {rowData.map((cellData, index) => (
-                      <TableCell
-                        key={index}
-                        sx={{ textAlign: "center", padding: "8px" }}
-                      >
-                        {cellData}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={headers.length}
-                  sx={{ textAlign: "center" }}
-                >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                  >
-                    <span>داده ای یافت نشد</span>
-                    <img
-                      src={noDataImage}
-                      alt="No Data"
-                      style={{ width: 100 }}
-                    />
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        {tableLoading ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height="100%"
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DataGrid
+            rows={filteredDates}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 20, 50]}
+            disableRowSelectionOnClick
+            disableColumnMenu
+            disableColumnResize
+            getRowId={(row) => row.id}
+            loading={tableLoading}
+            className="centered-header"
+          />
+        )}
+      </Paper>
     </div>
   );
 };

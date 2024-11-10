@@ -24,3 +24,25 @@ ul.MuiList-root {
     }
   }
 }
+
+
+.centered-header .MuiDataGrid-columnHeaderTitleContainer {
+  display: flex !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.MuiTablePagination-toolbar {
+  background-color: white;
+}
+
+.MuiTablePagination-actions {
+  transform: rotate(180deg);
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.MuiDataGrid-cell[data-field="profile_picture"] {
+  align-items: center;
+  display: flex;
+}
