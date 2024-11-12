@@ -32,16 +32,12 @@ const Users = () => {
   const [query, setQuery] = useSearchParams();
   const [tableLoading, setTableLoading] = useState(false);
 
-  useEffect(() => {
-    showUsers(isAscending);
-  }, [isAscending]);
-
   const showUsers = async (isAscending: boolean) => {
     setTableLoading(true);
     try {
       const { data: users, error } = await getUsers(isAscending);
-      if (users) setUsers(users);
       if (error) throw error;
+      setUsers(users || []);
     } catch (error) {
       console.error(error);
     } finally {
@@ -49,13 +45,16 @@ const Users = () => {
     }
   };
 
+  useEffect(() => {
+    showUsers(isAscending);
+  }, [isAscending]);
+
   const handleDelete = async (id: string) => {
     setLoadingStates((prev) => ({ ...prev, [id]: true }));
     try {
       const { error } = await supabase.from("users").delete().eq("id", id);
       if (error) throw error;
-      const { data: users } = await getUsers();
-      if (users) setUsers(users);
+      showUsers(isAscending); // Re-fetch users after deletion
     } catch (error) {
       console.error(error);
     } finally {
@@ -75,26 +74,17 @@ const Users = () => {
       field: "id",
       headerName: "شناسه",
       flex: 1,
-      sortable: false,
-      filterable: false,
       align: "center",
     },
     {
       field: "created_at",
       headerName: "تاریخ ساخت اکانت",
       flex: 1,
-      sortable: false,
-      filterable: false,
       valueGetter: (params: any) => {
         const date = params.value;
-        if (!date) return "-";
-        try {
-          return (
-            moment(date, "YYYY/MM/DD").locale("fa").format("YYYY/MM/DD") ?? "-"
-          );
-        } catch (error) {
-          return "-";
-        }
+        return date
+          ? moment(date, "YYYY/MM/DD").locale("fa").format("YYYY/MM/DD") ?? "-"
+          : "-";
       },
       align: "center",
     },
@@ -102,43 +92,34 @@ const Users = () => {
       field: "username",
       headerName: "نام کاربری",
       flex: 1,
-      sortable: false,
-      filterable: false,
       align: "center",
     },
     {
       field: "phone_number",
       headerName: "شماره تلفن",
       flex: 1,
-      sortable: false,
-      filterable: false,
       align: "center",
     },
     {
       field: "profile_picture",
       headerName: "عکس کاربر",
       flex: 1,
-      sortable: false,
-      filterable: false,
-      align: "center",
       renderCell: (params) =>
         params.value ? (
           <Avatar
             src={params.value}
             alt="Profile"
-            sx={{ width: 40, height: 40, margin: "0 auto" }}
+            sx={{ width: 40, height: 40 }}
           />
         ) : (
           "-"
         ),
+      align: "center",
     },
     {
       field: "actions",
       headerName: "عملیات",
       flex: 1,
-      sortable: false,
-      filterable: false,
-      align: "center",
       renderCell: (params) => (
         <IconButton onClick={() => handleDelete(params.row.id)} color="error">
           {loadingStates[params.row.id] ? (
@@ -148,16 +129,17 @@ const Users = () => {
           )}
         </IconButton>
       ),
+      align: "center",
     },
   ];
 
   return (
-    <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
-      <Paper sx={{ m: 3, width: "100%", height: 600 }}>
+    <div className="flex flex-col items-center p-5">
+      <Paper sx={{ m: 3, width: "100%" }}>
         <TableToolbar
+          title="لیست کاربران"
           isAscending={isAscending}
           setAscendingStatus={setAscendingStatus}
-          title="لیست کاربران"
           setQuery={setQuery}
         />
         {tableLoading ? (
@@ -169,14 +151,13 @@ const Users = () => {
           >
             <CircularProgress />
           </Box>
-        ) : filteredUsers?.length ? (
+        ) : filteredUsers.length ? (
           <DataGrid
             rows={filteredUsers}
             columns={columns}
+            autoHeight
             initialState={{
-              pagination: {
-                paginationModel: { pageSize: 10 },
-              },
+              pagination: { paginationModel: { pageSize: 10 } },
             }}
             pageSizeOptions={[5, 10, 20, 50]}
             disableRowSelectionOnClick

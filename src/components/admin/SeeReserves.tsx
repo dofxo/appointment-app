@@ -88,14 +88,12 @@ const SeeReserves = () => {
       flex: 1,
       valueGetter: (params) => {
         const dateValue = params;
-
         return dateValue ? convertToPersianDate(new Date(params), "date") : "-";
       },
       align: "center",
       sortable: false,
       filterable: false,
     },
-
     {
       field: "time",
       headerName: "زمان",
@@ -165,7 +163,7 @@ const SeeReserves = () => {
 
   return (
     <div id="reserve-list-wrapper" className="flex flex-col items-center p-5">
-      <Paper sx={{ m: 3, width: "100%", height: 600 }}>
+      <Paper sx={{ m: 3, width: "100%" }}>
         <TableToolbar
           title="لیست رزرو ها"
           setAscendingStatus={setAscendingStatus}
@@ -185,6 +183,7 @@ const SeeReserves = () => {
           <DataGrid
             rows={filteredDates}
             columns={columns}
+            autoHeight
             initialState={{
               pagination: {
                 paginationModel: { pageSize: 10 },
@@ -196,6 +195,12 @@ const SeeReserves = () => {
             disableColumnResize
             getRowId={(row) => row.id}
             loading={tableLoading}
+            sx={{
+              "& .MuiDataGrid-virtualScroller": {
+                padding: 0,
+                margin: 0,
+              },
+            }}
             className="centered-header"
           />
         )}

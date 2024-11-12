@@ -99,7 +99,7 @@ const App = () => {
       {!isLoading ? (
         <>
           <Toaster />
-          <center className="max-w-[1200px] m-[auto] mt-[20px] pt-[75px]">
+          <center className="max-w-[1200px] m-[auto] mt-[20px] pb-[50px] pt-[75px]">
             <Header />
 
             <AuthModal />
