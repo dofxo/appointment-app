@@ -81,7 +81,7 @@ const Users = () => {
       headerName: "تاریخ ساخت اکانت",
       flex: 1,
       valueGetter: (params: any) => {
-        const date = params.value;
+        const date = params;
         return date
           ? moment(date, "YYYY/MM/DD").locale("fa").format("YYYY/MM/DD") ?? "-"
           : "-";
