@@ -3,12 +3,9 @@ import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
-import { useImmer } from "use-immer";
 
 // helpers
 import { getUser } from "./services/services";
-import { reservredDatesArrayType } from "./types/types";
-import { MainContext } from "./context/mainContext";
 
 // components
 import CircularProgress from "@mui/material/CircularProgress";
@@ -25,16 +22,21 @@ import {
   TitleAdder,
   Users,
 } from "./components/";
+import { statesValues } from "./redux/appReducerHelpers";
+import {
+  setUsername,
+  setUserId,
+  setUserInfo,
+  setIsAdmin,
+  setShowAdmin,
+} from "./redux/appReducer";
+import { useDispatch } from "react-redux";
 
 const App = () => {
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [dates, setDates] = useImmer<reservredDatesArrayType>([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [userId, setUserId] = useState<null | string>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [username, setUsername] = useState("");
-  const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { userId, isAdmin } = statesValues();
+
+  const dispatch = useDispatch();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ const App = () => {
     (async () => {
       // sets userId (can be signed in already)
       const userId = localStorage.getItem("token") || null;
-      setUserId(userId);
+      dispatch(setUserId(userId));
 
       // if user is logged in
       if (userId) {
@@ -53,9 +55,9 @@ const App = () => {
           const { error, data } = await getUser(userId);
 
           if (data) {
-            if (data.username) setUsername(data.username);
-            if (data.isAdmin) setIsAdmin(true);
-            setUserInfo(data);
+            if (data.username) dispatch(setUsername(data.username));
+            if (data.isAdmin) dispatch(setIsAdmin(true));
+            dispatch(setUserInfo(data));
             navigate(data.isAdmin ? "/admin/see" : "/user");
           }
 
@@ -75,27 +77,11 @@ const App = () => {
     // changes the state based on the path
     const { pathname } = location;
     const filteredPathName = pathname.replace(/[\/\\]/g, "");
-    setShowAdmin(filteredPathName.includes("admin"));
+    dispatch(setShowAdmin(filteredPathName.includes("admin")));
   }, [isAdmin]);
 
   return (
-    <MainContext.Provider
-      value={{
-        setShowAdmin,
-        showAdmin,
-        isAdmin,
-        username,
-        userId,
-        setOpenModal,
-        setUserId,
-        userInfo,
-        setIsAdmin,
-        setUsername,
-        setDates,
-        dates,
-        openModal,
-      }}
-    >
+    <>
       {!isLoading ? (
         <>
           <Toaster />
@@ -123,7 +109,7 @@ const App = () => {
           <CircularProgress size={150} />
         </div>
       )}
-    </MainContext.Provider>
+    </>
   );
 };
 

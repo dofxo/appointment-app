@@ -4,19 +4,19 @@ import toast from "react-hot-toast";
 import uniqueIdGenerator from "./uniqueIdGenerator";
 import setToken from "./setToken";
 import { convertPersianToEnglishNumbers } from "./convertPersianToEnglishNubmers";
+import { setOpenModal, setUserId } from "../redux/appReducer";
+import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 export const handleSubmit = async ({
   values,
   isLogin,
-  setOpenModal,
   setLoading,
-  setUserId,
+  dispatch,
 }: {
   values: FormValues;
   isLogin: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
+  dispatch: Dispatch<UnknownAction>;
 }) => {
   try {
     setLoading(true);
@@ -52,9 +52,9 @@ export const handleSubmit = async ({
 
         if (error) throw error;
         toast.success("ثبت نام با موفقیت انجام شد");
-        setOpenModal(false);
+        dispatch(setOpenModal(false));
         setToken(String(userId));
-        setUserId(String(userId));
+        dispatch(setUserId(String(userId)));
       } else {
         toast.error("کاربری با نام کابری شما وجود دارد");
       }
@@ -67,9 +67,9 @@ export const handleSubmit = async ({
       if (data?.length) {
         if (data[0].password === values.password) {
           toast.success("ورود با موفقیت انجام شد");
-          setOpenModal(false);
+          dispatch(setOpenModal(false));
           setToken(String(data[0].id));
-          setUserId(String(data[0].id));
+          dispatch(setUserId(String(data[0].id)));
         } else {
           toast.error("رمز عبور اشتباه است");
         }
