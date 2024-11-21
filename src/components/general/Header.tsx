@@ -42,8 +42,7 @@ const Header = () => {
   };
 
   useEffect(() => {
-    console.log(isAdmin);
-    // setSwitchUserStatus(isAdmin);
+    setSwitchUserStatus(isAdmin);
   }, []);
 
   useEffect(() => {
