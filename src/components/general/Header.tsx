@@ -10,29 +10,28 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import setToken from "../../helpers/setToken";
-import { MainContext } from "../../context/mainContext";
+import { statesValues } from "../../redux/appReducerHelpers";
+import { useDispatch } from "react-redux";
+import {
+  setUserId,
+  setUsername,
+  setIsAdmin,
+  setOpenModal,
+} from "../../redux/appReducer";
 
 const Header = () => {
-  const {
-    isAdmin,
-    userInfo,
-    username,
-    setUsername,
-    setIsAdmin,
-    setUserId,
-    setOpenModal,
-    userId,
-  } = useContext(MainContext);
-
   const [inSettings, setInsettings] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [userProfile, setUserProfile] = useState("");
-  const [showSwithUserButton, setSwitchUserStatus] = useState(false);
+  const [showSwithUserButton, setSwitchUserStatus] = useState(true);
+
+  const { isAdmin, userInfo, username, userId } = statesValues();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -43,7 +42,8 @@ const Header = () => {
   };
 
   useEffect(() => {
-    setSwitchUserStatus(isAdmin);
+    console.log(isAdmin);
+    // setSwitchUserStatus(isAdmin);
   }, []);
 
   useEffect(() => {
@@ -107,9 +107,9 @@ const Header = () => {
                       <Typography
                         onClick={() => {
                           setToken(null);
-                          setUserId(null);
-                          setUsername("");
-                          setIsAdmin(false);
+                          dispatch(setUserId(null));
+                          dispatch(setUsername(""));
+                          dispatch(setIsAdmin(false));
                           setUserProfile("");
                         }}
                         className="!font-[unset] !text-sm"
@@ -125,7 +125,7 @@ const Header = () => {
                         <Typography
                           onClick={() => {
                             isAdmin ? navigate("/user/") : navigate("/admin/");
-                            setIsAdmin((prev) => !prev);
+                            dispatch(setIsAdmin(!isAdmin));
                           }}
                           className="!font-[unset] !text-sm"
                         >
@@ -143,14 +143,13 @@ const Header = () => {
                 <Button
                   variant="contained"
                   onClick={() => {
-                    setOpenModal(true);
+                    dispatch(setOpenModal(true));
                   }}
                   className="!font-[unset]"
                 >
                   ورود/عضویت
                 </Button>
               )}
-
               {userId && (
                 <>
                   <Link

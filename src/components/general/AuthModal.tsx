@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { TextField, Button } from "@mui/material";
 import { Formik, Form, Field, FormikErrors, FormikTouched } from "formik";
@@ -10,10 +10,12 @@ import { FormValues, InputInfo, inputTypes } from "../../types/types";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { handleSubmit } from "../../helpers/handleAuthSubmit";
 import { style } from "../../constants/modalStyle";
-import { MainContext } from "../../context/mainContext";
+import { setOpenModal } from "../../redux/appReducer";
+import { statesValues } from "../../redux/appReducerHelpers";
+import { useDispatch } from "react-redux";
 
 const AuthModal = () => {
-  const { setOpenModal, openModal, setUserId } = useContext(MainContext);
+  const { openModal } = statesValues();
 
   const [isLogin, setStatus] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -22,6 +24,8 @@ const AuthModal = () => {
   const passwordRef = useRef<inputTypes>();
   const confirmPasswordRef = useRef<inputTypes>();
   const phoneNumberRef = useRef<inputTypes>();
+
+  const dispatch = useDispatch();
 
   const inputs: InputInfo[] = [
     {
@@ -76,9 +80,8 @@ const AuthModal = () => {
             handleSubmit({
               values,
               isLogin,
-              setOpenModal,
               setLoading,
-              setUserId,
+              dispatch,
             });
           }}
           validationSchema={authSchema(isLogin)}

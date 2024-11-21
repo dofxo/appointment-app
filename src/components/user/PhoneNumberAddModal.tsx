@@ -4,11 +4,11 @@ import { Field, Formik, FormikErrors, FormikTouched, Form } from "formik";
 import { phoneNumberSchema } from "../../schemas/phoneNumber";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { supabase } from "../../Supabase/initialize";
 import toast from "react-hot-toast";
 import { convertPersianToEnglishNumbers } from "../../helpers/convertPersianToEnglishNubmers";
-import { MainContext } from "../../context/mainContext";
+import { statesValues } from "../../redux/appReducerHelpers";
 
 type formValue = { phoneNumber: string };
 
@@ -19,9 +19,8 @@ const PhoneNumberAddModal = ({
   phoneNumberModalStatus: boolean;
   setPhoneNumberModalStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { username: userName } = useContext(MainContext);
-
   const [isLoading, setIsLoading] = useState(false);
+  const { username: userName } = statesValues();
 
   return (
     <Modal

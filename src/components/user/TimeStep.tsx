@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { reservredDatesArrayType } from "../../types/types";
 import { getReserves } from "../../services/services";
 import { Box, Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ShowTimeAndDates } from "../";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
-import { MainContext } from "../../context/mainContext";
+import { statesValues } from "../../redux/appReducerHelpers";
 
 const TimeStep = ({
   selectedDate,
@@ -24,9 +24,8 @@ const TimeStep = ({
     [],
   );
 
-  const { username: userName } = useContext(MainContext);
-
   const [loading, setLoading] = useState(false);
+  const { username: userName } = statesValues();
 
   useEffect(() => {
     (async () => {

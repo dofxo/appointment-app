@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HiTrash } from "react-icons/hi";
 import { getReserves, getUsers } from "../../services/services";
 import { supabase } from "../../Supabase/initialize";
@@ -11,18 +11,21 @@ import {
 } from "@mui/material";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import TableToolbar from "../general/TableToolBar";
-import { MainContext } from "../../context/mainContext";
 import { useSearchParams } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useDispatch } from "react-redux";
+import { setDates } from "../../redux/appReducer";
+import { statesValues } from "../../redux/appReducerHelpers";
 
 const SeeReserves = () => {
-  const { dates, setDates } = useContext(MainContext);
   const [isAscending, setAscendingStatus] = useState(false);
   const [query, setQuery] = useSearchParams();
   const [loadingStates, setLoadingStates] = useState<{ [id: string]: boolean }>(
     {},
   );
   const [tableLoading, setTableLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { dates } = statesValues();
 
   const showReserversOnTable = async (isAscending: boolean) => {
     setTableLoading(true);
@@ -38,7 +41,7 @@ const SeeReserves = () => {
         }
       });
 
-      if (reserves) setDates(reserves);
+      if (reserves) dispatch(setDates(reserves));
     } catch (error) {
       console.error(error);
     } finally {
@@ -73,7 +76,7 @@ const SeeReserves = () => {
         }
       });
 
-      if (reserves) setDates(reserves);
+      if (reserves) dispatch(setDates(reserves));
     } catch (error) {
       console.error(error);
     } finally {

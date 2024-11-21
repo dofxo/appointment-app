@@ -8,20 +8,20 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Moment } from "jalali-moment";
 import moment from "jalali-moment";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Supabase/initialize";
 import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
 import { getReserves } from "../../services/services";
 import { convertToPersianDate } from "../../helpers/convertToPersianDate";
-import { MainContext } from "../../context/mainContext";
+import { setDates } from "../../redux/appReducer";
+import { useDispatch } from "react-redux";
 
 const ManageReserves = () => {
-  const { setDates } = useContext(MainContext);
-
-  const [date, setDate] = useState<Moment | null>(null);
+  const [date, setDate] = useState<Moment | null>(moment());
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
+  const dispatch = useDispatch();
 
   return (
     <div className="flex flex-col gap-5 items-center max-w-[300px] pb-[20px]">
@@ -77,7 +77,7 @@ const ManageReserves = () => {
             if (error) throw error;
 
             const { data: reserves } = await getReserves();
-            if (reserves) setDates(reserves);
+            if (reserves) dispatch(setDates(reserves));
 
             navigate("/admin/see");
           } catch (error) {

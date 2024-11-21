@@ -1,9 +1,9 @@
 import { Card } from "@mui/material";
 import { supabase } from "../../Supabase/initialize";
 import toast from "react-hot-toast";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import { MainContext } from "../../context/mainContext";
+import { statesValues } from "../../redux/appReducerHelpers";
 
 const ShowTimeAndDates = ({
   date,
@@ -24,9 +24,8 @@ const ShowTimeAndDates = ({
   setShowState?: React.Dispatch<React.SetStateAction<"reserves" | "new">>;
   setPhoneNumberModalStatus?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { username: userName } = useContext(MainContext);
-
   const [loading, setLoading] = useState(false);
+  const { username: userName } = statesValues();
 
   const updateUserInfo = async () => {
     const { error } = await supabase
