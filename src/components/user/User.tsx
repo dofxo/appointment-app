@@ -194,18 +194,6 @@ const UserPage = () => {
             >
               <HiChevronRight />
             </Button>
-            <Button
-              variant="contained"
-              style={{ display: step >= 2 ? "none" : "" }}
-              className="prevNextBtn"
-              onClick={() => {
-                if (submitButtonRef.current) {
-                  submitButtonRef.current.click();
-                }
-              }}
-            >
-              <HiChevronLeft />
-            </Button>
 
             <PhoneNumberAddModal
               phoneNumberModalStatus={phoneNumberModalStatus}
