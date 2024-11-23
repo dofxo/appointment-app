@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { useState, useEffect } from "react";
+import { HiChevronRight } from "react-icons/hi";
 import {
   Box,
   Button,
@@ -14,13 +14,13 @@ import "./style.scss";
 import { supabase } from "../../Supabase/initialize";
 import TitleAdder from "../../HOC/TitleAdder";
 import { DateStep, TimeStep } from "../";
-import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import PhoneNumberAddModal from "./PhoneNumberAddModal";
+import { format } from "date-fns-jalali";
+import { convertToPersianDate } from "../../helpers/converToPersianDate";
 
 const UserPage = () => {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
-  const submitButtonRef = useRef<null | HTMLButtonElement>(null);
   const [showState, setShowState] = useState<"reserves" | "new">("reserves");
   const [loading, setLoading] = useState(false);
   const [phoneNumberModalStatus, setPhoneNumberModalStatus] = useState(false);
@@ -110,21 +110,13 @@ const UserPage = () => {
                   <div className="flex justify-between">
                     <span>تاریخ:</span>
                     <span>
-                      {convertToPersianDate(
-                        new Date(reserveInfo?.date) ?? "",
-                        "date",
-                      )}
+                      {convertToPersianDate(new Date(reserveInfo.date))}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span>زمان:</span>
-                    <span>
-                      {convertToPersianDate(
-                        new Date(reserveInfo?.date) ?? "",
-                        "time",
-                      )}
-                    </span>
+                    <span>{format(new Date(reserveInfo.date), "HH:mm")}</span>
                   </div>
                 </div>
               </div>

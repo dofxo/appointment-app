@@ -13,12 +13,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../Supabase/initialize";
 import uniqueIdGenerator from "../../helpers/uniqueIdGenerator";
 import { getReserves } from "../../services/services";
-import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import { setDates } from "../../redux/appReducer";
 import { useDispatch } from "react-redux";
+import { convertToPersianDate } from "../../helpers/converToPersianDate";
+import { format } from "date-fns-jalali";
 
 const ManageReserves = () => {
-  const [date, setDate] = useState<Moment | null>(moment());
+  const [date, setDate] = useState<Moment>(moment());
   const navigate = useNavigate();
   const [buttonLoading, setButtonLoading] = useState(false);
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const ManageReserves = () => {
     <div className="flex flex-col gap-5 items-center max-w-[300px] pb-[20px]">
       <LocalizationProvider dateAdapter={AdapterMomentJalaali}>
         <StaticDateTimePicker
-          onChange={(newValue) => setDate(newValue)}
+          onChange={(newValue) => setDate(newValue as Moment)}
           viewRenderers={{
             hours: renderTimeViewClock,
             minutes: renderTimeViewClock,
@@ -43,18 +44,11 @@ const ManageReserves = () => {
         <div className="self-start mt-5">
           <p className="flex gap-2 items-center">
             <HiOutlineCalendar className="w-[20px] h-[20px]" />
-            <span>
-              {convertToPersianDate(
-                new Date(date?.toDate() ?? new Date()),
-                "date",
-              )}
-            </span>
+            <span>{convertToPersianDate(date?.toDate())}</span>
           </p>
           <p className="flex gap-2 items-center">
             <HiOutlineClock className="w-[20px] h-[20px]" />
-            <span>
-              {convertToPersianDate(date?.toDate() ?? new Date(), "time")}
-            </span>
+            <span>{format(date?.toDate(), "HH:mm")}</span>
           </p>
         </div>
       </Card>
