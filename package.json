@@ -21,6 +21,7 @@
     "@reduxjs/toolkit": "^2.3.0",
     "@supabase/supabase-js": "^2.45.6",
     "axios": "^1.7.5",
+    "date-fns-jalali": "^3.2.0-0",
     "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "jalali-moment": "^3.3.11",
