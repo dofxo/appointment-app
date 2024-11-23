@@ -10,10 +10,11 @@ import {
   Avatar,
   Paper,
 } from "@mui/material";
-import moment from "jalali-moment";
 import TableToolbar from "../general/TableToolBar";
 import { useSearchParams } from "react-router-dom";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { convertToPersianDate } from "../../helpers/converToPersianDate";
+import { formatDistanceToNow } from "date-fns-jalali";
 
 type User = {
   id: string;
@@ -83,7 +84,7 @@ const Users = () => {
       valueGetter: (params: any) => {
         const date = params;
         return date
-          ? moment(date, "YYYY/MM/DD").locale("fa").format("YYYY/MM/DD") ?? "-"
+          ? `${convertToPersianDate(date)} - ${formatDistanceToNow(date)} قبل`
           : "-";
       },
       align: "center",

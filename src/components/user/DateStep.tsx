@@ -3,8 +3,9 @@ import { getReserves } from "../../services/services.ts";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Box } from "@mui/material";
 import { ShowTimeAndDates } from "../";
-import { convertToPersianDate } from "../../helpers/convertToPersianDate.ts";
 import { statesValues } from "../../redux/appReducerHelpers.ts";
+import { format } from "date-fns-jalali";
+import { convertToPersianDate } from "../../helpers/converToPersianDate.ts";
 
 const DateStep = ({
   setSelectedDate,
@@ -25,9 +26,17 @@ const DateStep = ({
 
       const filteredDates: string[] = [];
 
-      reserves?.map((date: any) => {
-        if (filteredDates.includes(date.date) || date.userName) return;
-        filteredDates.push(date.date);
+      reserves?.forEach((date: any) => {
+        const formattedDate = convertToPersianDate(date.date);
+
+        if (
+          !filteredDates.some(
+            (d) => convertToPersianDate(new Date(d)) === formattedDate,
+          ) &&
+          !date.userName
+        ) {
+          filteredDates.push(date.date);
+        }
       });
 
       setReservedDate(filteredDates);
@@ -49,7 +58,7 @@ const DateStep = ({
             {reservedDates.length ? (
               reservedDates.map((date) => (
                 <ShowTimeAndDates
-                  date={convertToPersianDate(new Date(date), "date")}
+                  date={format(new Date(date), "yyyy MMMM d")}
                   key={date}
                   setSelectedDate={setSelectedDate}
                   setStep={setStep}

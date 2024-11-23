@@ -9,13 +9,14 @@ import {
   Avatar,
   Paper,
 } from "@mui/material";
-import { convertToPersianDate } from "../../helpers/convertToPersianDate";
 import TableToolbar from "../general/TableToolBar";
 import { useSearchParams } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useDispatch } from "react-redux";
 import { setDates } from "../../redux/appReducer";
 import { statesValues } from "../../redux/appReducerHelpers";
+import { format } from "date-fns-jalali";
+import { convertToPersianDate } from "../../helpers/converToPersianDate";
 
 const SeeReserves = () => {
   const [isAscending, setAscendingStatus] = useState(false);
@@ -90,8 +91,9 @@ const SeeReserves = () => {
       headerName: "تاریخ",
       flex: 1,
       valueGetter: (params) => {
-        const dateValue = params;
-        return dateValue ? convertToPersianDate(new Date(params), "date") : "-";
+        const dateValue = new Date(params);
+
+        return dateValue ? convertToPersianDate(dateValue) : "-";
       },
       align: "center",
       sortable: false,
@@ -103,9 +105,9 @@ const SeeReserves = () => {
       flex: 1,
       renderCell: (params) => {
         const timeValue = params.row.date;
-        return timeValue
-          ? convertToPersianDate(new Date(timeValue), "time")
-          : "-";
+        const convertedDate = format(timeValue, "HH:mm");
+
+        return timeValue ? convertedDate : "-";
       },
       align: "center",
       sortable: false,
@@ -118,6 +120,10 @@ const SeeReserves = () => {
       align: "center",
       sortable: false,
       filterable: false,
+      renderCell: (params) => {
+        const userName = params.value;
+        return userName ?? "-";
+      },
     },
     {
       field: "phone_number",
@@ -126,13 +132,17 @@ const SeeReserves = () => {
       align: "center",
       sortable: false,
       filterable: false,
+      renderCell: (params) => {
+        const phoneNumber = params.value;
+        return phoneNumber ?? "-";
+      },
     },
     {
       field: "profile_picture",
       headerName: "تصویر کاربر",
       flex: 1,
-      renderCell: (params) =>
-        params.value ? (
+      renderCell: (params) => {
+        return params.value ? (
           <Avatar
             src={params.value}
             alt="Profile"
@@ -140,7 +150,8 @@ const SeeReserves = () => {
           />
         ) : (
           "-"
-        ),
+        );
+      },
       align: "center",
       sortable: false,
       filterable: false,
