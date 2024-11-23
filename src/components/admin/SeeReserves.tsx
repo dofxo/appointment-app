@@ -42,6 +42,7 @@ const SeeReserves = () => {
       });
 
       if (reserves) dispatch(setDates(reserves));
+      console.log(dates);
     } catch (error) {
       console.error(error);
     } finally {
@@ -118,6 +119,10 @@ const SeeReserves = () => {
       align: "center",
       sortable: false,
       filterable: false,
+      renderCell: (params) => {
+        const userName = params.value;
+        return userName ?? "-";
+      },
     },
     {
       field: "phone_number",
@@ -126,13 +131,17 @@ const SeeReserves = () => {
       align: "center",
       sortable: false,
       filterable: false,
+      renderCell: (params) => {
+        const phoneNumber = params.value;
+        return phoneNumber ?? "-";
+      },
     },
     {
       field: "profile_picture",
       headerName: "تصویر کاربر",
       flex: 1,
-      renderCell: (params) =>
-        params.value ? (
+      renderCell: (params) => {
+        return params.value ? (
           <Avatar
             src={params.value}
             alt="Profile"
@@ -140,7 +149,8 @@ const SeeReserves = () => {
           />
         ) : (
           "-"
-        ),
+        );
+      },
       align: "center",
       sortable: false,
       filterable: false,
